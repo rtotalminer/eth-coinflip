@@ -17,7 +17,7 @@ contract Coinflip is VRFv2Consumer
         uint256 payout;
     }
 
-    mapping(uint256 => BetStatus) bets;
+    mapping(uint256 => BetStatus) public bets;
     
     constructor(
         uint64 subscriptionId,

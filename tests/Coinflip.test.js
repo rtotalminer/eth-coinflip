@@ -19,5 +19,5 @@ describe("Coinflip", function () {
         expect(_owner).to.equal(coinflipAddress);
     });
 
-    it("Should")
+    //it("Should")
 });

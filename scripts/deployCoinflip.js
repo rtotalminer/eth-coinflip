@@ -1,29 +1,24 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
+
 const hre = require("hardhat");
 
 async function main() {
 
-    const subscriptionId = 7652;
-    const coordinator = "0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625";
-    // move this hard coded value from the contract to the constructor
-    // const keyHash = 0x474e34a077df58807dbe9c96d3c009b23b3c6d0cce433e59bbf5b34f823bc56c;
-    
-    const coinflip = await hre.ethers.deployContract("Coinflip", [subscriptionId, coordinator]);
+    const subManagerId = 7687;
+    const sepoliaCoordinator = "0x8103B0A8A00be2DDC778e6e7eaa21791Cd364625";
+
+    const coinflip = await hre.ethers.deployContract("Coinflip", [subManagerId, sepoliaCoordinator]);
     
     await coinflip.waitForDeployment();
     console.log(`Contract deployed to ${coinflip.target}`);
 
     // Wait 5 block confirmations instead
-    await new Promise(t => setTimeout(t, 10000));
+    //await new Promise(t => setTimeout(t, 25000));
+
+	await coinflip.deploymentTransaction().wait(5);
     
     await run(`verify:verify`, {
-      address: coinflip.target,
-      constructorArguments: [subscriptionId, coordinator],
+        address: coinflip.target,
+        constructorArguments: [subManagerId, sepoliaCoordinator],
     });
     console.log(`Verified contract on Etherscan.`);
 }

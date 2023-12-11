@@ -6,17 +6,21 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 
-async function main() {
+import { SUBSC_MANAGER_ADDR } from "./config.js"; 
 
-    // get the deployed contracts address
-    const coinflipAddress = "0xe89e163F2F1c1218f3b99F5A71378618921fAf07";
+async function main(l)
+{
+    const SubManager = await ethers.getContractFactory("VRFv2SubscriptionManager");
+    const submanager = SubManager.attach(SUBSC_MANAGER_ADDR);
 
-    // add it to the chainlink subscription
+    const consumerAddr = "";
+    submanager.addConsumer(consumerAddr);
+
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
+    console.error(error);
+    process.exitCode = 1;
 });
