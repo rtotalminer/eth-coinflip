@@ -3,6 +3,8 @@ const hre = require("hardhat");
 
 describe("Coinflip", function () {
 
+    // create a fund 
+
     const coinflipAddress = "0xe89e163F2F1c1218f3b99F5A71378618921fAf07";
 
     it("Should attach to the correct contract address.", async function () {

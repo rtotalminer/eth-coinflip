@@ -35,6 +35,7 @@ contract VRFv2SubscriptionManager is Ownable
     }
 
     // Assumes this contract owns link.
+    // 1000000000000000000 = 1 LINK
     function topUpSubscription(uint256 amount) external onlyOwner
     {
         LINKTOKEN.transferAndCall(
