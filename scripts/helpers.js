@@ -1,4 +1,11 @@
 const hre = require("hardhat");
+const fs = require("fs");
+
+const axios = require("axios");
+
+require("dotenv").config()
+
+const { SEPOLIA_LINK_ADDR } = require("../config/config");
 
 async function verifyContract(_address, _constructorArguments)
 {
@@ -23,13 +30,23 @@ async function deployContract(_contract, _constructorArguments)
     return contract;
 }
 
-async function sendLink(address, amount)
+async function getABI(address)
 {
-    //
+    let url = `https://api-sepolia.etherscan.io/api?module=contract&action=getabi&address=` + address + `&format=raw`;
+    res = await axios.get(url);
+    return res.data
 }
 
+async function sendERC20(abi, toAddress, amount)
+{
+    const Token = await hre.ethers.getContractAt(abi, SEPOLIA_LINK_ADDR);
+    const tx = await Token.transfer(toAddress, amount);
+    return tx;
+}
+  
 module.exports = {
     deployContract,
     verifyContract,
-    sendLink
+    sendERC20,
+    getABI
 };
