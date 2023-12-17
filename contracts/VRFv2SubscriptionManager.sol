@@ -19,10 +19,9 @@ contract VRFv2SubscriptionManager is Ownable
     address link_token_contract = 0x779877A7B0D9E8603169DdbD7836e478b4624789; // sepolia
 
     // Storage parameters
-    uint256[] public s_randomWords;
-    uint256 public s_requestId;
     uint64 public s_subscriptionId;
     address s_owner;
+    address[] consumers;
 
     constructor(address _vrfCoordinator)
     Ownable(msg.sender)
@@ -48,7 +47,7 @@ contract VRFv2SubscriptionManager is Ownable
     function addConsumer(address consumerAddress) external onlyOwner
     {
         // Add a consumer contract to the subscription.
-        COORDINATOR.addConsumer(s_subscriptionId, consumerAddress);
+        COORDINATOR.addConsumer(s_subscriptionId, consumerAddress); 
     }
 
     function removeConsumer(address consumerAddress) external onlyOwner

@@ -4,63 +4,69 @@ pragma solidity ^0.8.0;
 
 import "./VRFv2Consumer.sol";
 
-contract Coinflip is VRFv2Consumer
-{
-    event FlipStarted(uint256 requestId, address better, uint256 stake, uint256 bet);
-    event FlipFinish(uint256 requestId, address better, uint256 stake, bool decision);
+contract Coinflip is VRFv2Consumer {
 
-    struct BetStatus {
-        address better;
+    enum CoinDecision {
+        HEADS,
+        TAILS,
+        UNDECIDED
+    }
+
+    struct Bet {
+        uint256 requestId;
+        address player;
         uint256 stake;
-        uint256 bet;
-        bool decision;
+        CoinDecision prediction;
+        CoinDecision outcome;
         uint256 payout;
     }
 
-    mapping(uint256 => BetStatus) public bets;
-    
-    constructor(
+    mapping(address => bool) public hasPlayerBet;
+    mapping(uint256 => Bet) public bets;
+
+    constructor (
         uint64 subscriptionId,
         address coordinator
     )
-    VRFv2Consumer(
-        subscriptionId,
-        coordinator,
-        address(this)
-    )
+    VRFv2Consumer(subscriptionId, coordinator, address(this)) {  }
+
+    function calculatePayout(uint256 value) pure internal returns (uint256)
     {
+        return value;
     }
 
-    function flip(uint256 bet) public payable
+    function flip(CoinDecision _bet) public payable
     {
-        require(bet <= 1, "The bet must either be 0 or 1");
+        require(_bet == CoinDecision.HEADS || _bet == CoinDecision.TAILS, "The bet must be valid.");
+        require(hasPlayerBet[msg.sender] == false, "There is a flip already in progress.");
+
+        hasPlayerBet[msg.sender] = true;
+        
         uint256 requestId = this.requestRandomWords();
-        emit FlipStarted(requestId, msg.sender, msg.value, bet);
-        uint256 payout = msg.value + msg.value/2;
-        BetStatus memory betStatus = BetStatus(msg.sender, msg.value, bet, false, payout);
-        bets[requestId] = betStatus;
+
+        Bet memory bet = Bet(
+            requestId,
+            msg.sender,
+            msg.value,
+            _bet,
+            CoinDecision.UNDECIDED,
+            calculatePayout(msg.value)
+        );
+
+        bets[requestId] = bet;
     }
 
     function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal override
     {
-        super.fulfillRandomWords(_requestId, _randomWords);
+        CoinDecision decision;
+        uint256 outcome = _randomWords[0] % 2;
         
-        uint256 headstails = 1;
-        if (_randomWords[0] % 2 == 0) {
-            headstails = 0;
-        }
-
-        if (headstails == bets[_requestId].bet) {
-            bets[_requestId].decision = true;
-        }
-
-        emit FlipFinish(
-            _requestId,
-            bets[_requestId].better,
-            bets[_requestId].stake,
-            bets[_requestId].decision
-        );
+        if (outcome == 0) { decision = CoinDecision.HEADS; }
+        if (outcome == 1) { decision = CoinDecision.TAILS; }
+        
+        bets[_requestId].outcome = decision;
+        hasPlayerBet[bets[_requestId].player] = false;
+        
+        super.fulfillRandomWords(_requestId, _randomWords);
     }
-    
 }
-
