@@ -5,7 +5,7 @@ describe("Coinflip", function () {
 
     // create a fund 
 
-    const coinflipAddress = "0xe89e163F2F1c1218f3b99F5A71378618921fAf07";
+    const coinflipAddress = "0xdc3ad01031A2635F57A484E2B346107FafF0C1fD";
 
     it("Should attach to the correct contract address.", async function () {
         const coinflip = await hre.ethers.getContractAt("Coinflip", coinflipAddress); // set coinflip contract to a var
@@ -21,5 +21,11 @@ describe("Coinflip", function () {
         expect(_owner).to.equal(coinflipAddress);
     });
 
-    //it("Should")
+    it("Should flip correctly with a bet of allowed values i.e. [1, 0].", async function() {
+        const _owner = await coinflip.flip();
+    });
+
+    it("Should not allow a user to have to flips running.", async function() {
+
+    });
 });
