@@ -23,6 +23,7 @@ contract Coinflip is VRFv2Consumer {
 
     mapping(address => bool) public hasPlayerBet;
     mapping(uint256 => Bet) public bets;
+    mapping(address => uint256) public debts;
 
     constructor (
         uint64 subscriptionId,
@@ -32,20 +33,20 @@ contract Coinflip is VRFv2Consumer {
 
     function calculatePayout(uint256 value) pure internal returns (uint256)
     {
-        return value;
+        return value / 2;
     }
 
-    function flip(CoinDecision _bet) public payable
+    function flip(CoinDecision _bet) public payable returns (uint256 requestId)
     {
         require(_bet == CoinDecision.HEADS || _bet == CoinDecision.TAILS, "The bet must be valid.");
         require(hasPlayerBet[msg.sender] == false, "There is a flip already in progress.");
 
         hasPlayerBet[msg.sender] = true;
         
-        uint256 requestId = this.requestRandomWords();
+        uint256 _requestId = this.requestRandomWords();
 
         Bet memory bet = Bet(
-            requestId,
+            _requestId,
             msg.sender,
             msg.value,
             _bet,
@@ -53,7 +54,8 @@ contract Coinflip is VRFv2Consumer {
             calculatePayout(msg.value)
         );
 
-        bets[requestId] = bet;
+        bets[_requestId] = bet;
+        return _requestId;
     }
 
     function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal override
@@ -63,10 +65,21 @@ contract Coinflip is VRFv2Consumer {
         
         if (outcome == 0) { decision = CoinDecision.HEADS; }
         if (outcome == 1) { decision = CoinDecision.TAILS; }
+
+        if (bets[_requestId].prediction == decision) {
+            debts[bets[_requestId].player] += bets[_requestId].payout;
+        }
         
         bets[_requestId].outcome = decision;
         hasPlayerBet[bets[_requestId].player] = false;
         
         super.fulfillRandomWords(_requestId, _randomWords);
+    }
+
+    function withdraw() public
+    {
+        require(debts[msg.sender] < address(this).balance, "The bank cannot fulfill the withdraw.");
+        payable(msg.sender).transfer(debts[msg.sender]);
+        
     }
 }

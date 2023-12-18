@@ -3,7 +3,7 @@ const hre = require("hardhat");
 
 describe("Coinflip", function () {
 
-    const coinflipAddress = "0x5748d878bA3AC383535642B613816838C94bf7f6";
+    const coinflipAddress = "0xe296207dabae16a848517dd90ae3d49ea6968a75";
     var coinflip = undefined;
     var requestId = undefined;
 
@@ -20,10 +20,39 @@ describe("Coinflip", function () {
     });
 
     it("Should flip correctly with a bet of allowed values i.e. [1, 0].", async function() {
-        const flipTx0 = await coinflip.flip(0, {value: hre.ethers.parseEther("0.01")});
-        await flipTx0.wait();
+        
+        //call flip
+        // const flipTx0 = await coinflip.flip(0, {value: hre.ethers.parseEther("0.01")});
+        // await flipTx0.wait();
+        // requestId = BigInt(flipTx0.data).toString()
 
-        // wait for event request fulfilled
+        // console.log(requestId);
+
+        coinflip.on("RequestFulfilled", (_requestId, numWords, event) => {
+            let info = {
+                requestId: requestId,
+                numWords: numWords
+            };
+            console.log(info);
+        });
+
+        // subscribe to the request fulfileed event
+        // await when one with request id is resolved 
+        // filter = {
+        //     address: coinflipAddress,
+        //     topics: [
+        //         // the name of the event, parnetheses containing the data type of each event, no spaces
+        //         hre.ethers.id("RequestFulfilled(uint256, uint256[])")
+        //     ]
+        // }
+        // let event = await coinflip.on("RequestFulfilled", async (requestId, numWords) => {
+            
+        // }).then(console.log("Working"));
+
+        // let x = coinflip.listeners( "RequestFulfilled" ) ;
+
+        // 
+
     });
 
     it("Should break when flipped an unallowed bet i.e. not [1, 0].", async function() {
