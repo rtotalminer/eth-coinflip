@@ -1,7 +1,7 @@
 node_modules
 .env
 
-/app/dist/
+/app/dist/*
 
 # Hardhat files
 /cache
