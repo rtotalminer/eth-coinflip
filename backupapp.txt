@@ -2,14 +2,14 @@
 
 import { ethers } from "ethers";
 
-const API_KEY = "65dbde20a9884eaa987611550c901cd0";
+const API_KEY = "";
 // @ts-ignore
 // @ts-ignore
 const DEV_SEPOLIA_NETWORK = `https://sepolia.infura.io/v3/${API_KEY}`;
 
 async function handleCoinflip()
 {
-    const provider = new ethers.JsonRpcProvider("https://sepolia.infura.io/v3/65dbde20a9884eaa987611550c901cd0");
+    const provider = new ethers.JsonRpcProvider("https://sepolia.infura.io/v3/");
     console.log(await provider.getBlockNumber());
     
     // // @ts-ignore
