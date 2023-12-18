@@ -58,6 +58,7 @@ contract Coinflip is VRFv2Consumer {
         return _requestId;
     }
 
+    // This should only be allowed be called ONCE/FULFILLMENT IMPORTANT!
     function fulfillRandomWords(uint256 _requestId, uint256[] memory _randomWords) internal override
     {
         CoinDecision decision;

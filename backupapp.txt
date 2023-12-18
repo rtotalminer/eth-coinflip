@@ -2,29 +2,20 @@
 
 import { ethers } from "ethers";
 
-
-async function connectMetamask()
-{
-  // A Web3Provider wraps a standard Web3 provider, which is
-  // what MetaMask injects as window.ethereum into each page
-  const provider = new ethers.JsonRpcProvider();
-
-  // MetaMask requires requesting permission to connect users accounts
-  let accounts = await provider.send("eth_requestAccounts", []);
-
-  // The MetaMask plugin also allows signing transactions to
-  // send ether and pay to change state within the blockchain.
-  // For this, you need the account signer...
-  const signer = provider.getSigner();
-
-  console.log(provider, signer, accounts);
-}
+const API_KEY = "65dbde20a9884eaa987611550c901cd0";
+// @ts-ignore
+// @ts-ignore
+const DEV_SEPOLIA_NETWORK = `https://sepolia.infura.io/v3/${API_KEY}`;
 
 async function handleCoinflip()
 {
-    await connectMetamask();
+    const provider = new ethers.JsonRpcProvider("https://sepolia.infura.io/v3/65dbde20a9884eaa987611550c901cd0");
+    console.log(await provider.getBlockNumber());
+    
+    // // @ts-ignore
+    // const metmaskProvider = new ethers.JsonRpcProvider(window.ethereum);
+    window.ethereum.on('connect', handler: (connectInfo: ConnectInfo) => void);
 }
-
 
 
 // jquery(document).ready(function($){

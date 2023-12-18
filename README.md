@@ -16,3 +16,15 @@ PRIVATE_KEY = ""
 SEPOLIA_RPC_URL = ""
 ETHERSCAN_API_KEY = ""
 ```
+
+# To run the app
+
+To build the source code:
+```shell
+npm run build
+```
+
+To run the development server:
+```shell
+npm run dev
+```
