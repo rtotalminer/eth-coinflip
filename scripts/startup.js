@@ -48,7 +48,7 @@ async function createCoinflip(VRFv2SubscriptionManager)
 
 async function main()
 {
-    let VRFv2SubscriptionManager = await createSubscriptionManager(10); //await hre.ethers.getContractAt("VRFv2SubscriptionManager", "0x7117f258df29b02d7843309a847708f6c7685966");
+    let VRFv2SubscriptionManager = await hre.ethers.getContractAt("VRFv2SubscriptionManager", "0x2505c4e6a410f25f0ff153f40a9219bba3fdc21b");
     let coinflip = await createCoinflip(VRFv2SubscriptionManager);
 }
 
