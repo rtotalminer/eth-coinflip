@@ -1,10 +1,10 @@
 import { ethers } from "ethers";
 import React from 'react';
 import "./Coinflip.css";
-import { attachContract, checkConnection, getABI, getAccounts } from '../../helpers';
-import { COINFLIP_ADDR } from '../../config';
+import { attachContract, checkConnection, getABI, getAccounts } from '../../utils/helpers';
+import { COINFLIP_ADDR } from '../../utils/config';
 
-
+import Icon from './ethereum-eth-logo.svg';
 
 const Coinflip = (props) => {
 
@@ -22,6 +22,7 @@ const Coinflip = (props) => {
 
   var [amount, setAmount] = React.useState(0);
   const [debts, setDebts] = React.useState("0");
+  var [coinIsFlipping, setCoinIsFlipping] = React.useState(false);
 
   async function hasCoinflipFired()
   {
@@ -39,31 +40,53 @@ const Coinflip = (props) => {
     return debts;
   }
 
-  async function fireCoinflip(amount)
+  async function fireCoinflip(amount=0.001)
   {
+    console.log(amount)   
     if (coinflip == undefined) {
       return;
     }
+
     let hasPlayerBet = await hasCoinflipFired();
     if (hasPlayerBet === true) {
+      playAnimation();
       console.log("You have a flip awaiting a decision...");
       return;
     } 
-    
+
+
+        
     let flipTx = await coinflip.flip(0, {value: ethers.parseEther(amount.toString())});
+    playAnimation();
     console.log(flipTx);
     flipTx.wait();
 
+    console.log("awaiting request sent");
     coinflip.on("RequestSent", (requestId, numWords, event) => {
       console.log(`${requestId}, ${numWords}, ${event}`);
-      event.removeListener();
+      //event.removeListener();
     });
 
+    console.log("awaiting request fulfilled");
     coinflip.on("RequestFulfilled", (_requestId, _randomWords, event) => {
       console.log(`${_requestId}, ${_randomWords}, ${event}`);
       event.removeListener();
     });
 
+  }
+
+
+
+
+  async function playAnimation()
+  {
+    if (coinIsFlipping)  return;
+    var outcome = document.querySelector(".coinflip");
+    
+    setCoinIsFlipping(true);
+    outcome.classList.toggle("animation");
+
+    
   }
 
   React.useEffect(() => {
@@ -73,36 +96,52 @@ const Coinflip = (props) => {
       let _debts = await coinflip.debts(accounts[0]);
       let debts_ = ethers.formatEther(_debts.toString());
       setDebts(debts_);
+      
+      let coinflipFired = await hasCoinflipFired();
+      if (coinflipFired === true) {
+        playAnimation();
+      }
+    
     };
 
     if (coinflip) {
       setVars();
     }
+
+
   }, []);
 
-  return (
-    <div id="coinflip">
-      <div id="coin" onClick={() => fireCoinflip(amount)}>
-        <div className="side-a"></div>
-        <div className="side-b"></div>
-      </div>
+  const handleInputChange = (event) => {
+    // Ensure the input value is a valid number
+    const newValue = event.target.value;//.replace(/\D/g, '');
 
-      <div>
-        Bet:
+    // Update the amount state
+    setAmount(newValue);
+  };
+
+  return (
+    <>
+      <div className="coinflip-container">
+        <>
+          <div className="coinflip"  onClick={() => fireCoinflip(amount)}>
+          <img
+            src={Icon}
+            height="107"
+            width="120" />
+          </div>
+        </>
+        <>
         <input
           type="text"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          className="rounded-input"
+          placeholder="Enter something"
+          
+          onChange={handleInputChange}
         />
-        <h1>Click on coin to flip</h1>
+      </>
       </div>
 
-      <div>
-        <span>debts: {debts}</span>
-        <button>withdraw</button>
-      </div>
-
-    </div>
+    </>
   );
 };
 

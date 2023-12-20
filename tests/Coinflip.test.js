@@ -3,7 +3,7 @@ const hre = require("hardhat");
 
 describe("Coinflip", function () {
 
-    const coinflipAddress = "0xe296207dabae16a848517dd90ae3d49ea6968a75";
+    const coinflipAddress = "0x753C1C0AA5A59c568F0ED338744717DD16E2ae67";
     var coinflip = undefined;
     var requestId = undefined;
 

@@ -1,13 +1,22 @@
 # Useful Hardhat Commands
 
-To run tests:
 ```shell
-npx hardhat test tests/example-test.js --network sepolia
+npm run <command> [-- <args>]
 ```
 
-To deploy the contract:
+To run tests:
 ```shell
-npx hardhat run scripts/deploy.js --network sepolia
+npm run test -- --network {network}
+```
+
+To deploy the contracts:
+```shell
+npm run deploy --network {network}
+```
+
+
+```shell
+ganache
 ```
 
 # .env example
@@ -15,6 +24,7 @@ npx hardhat run scripts/deploy.js --network sepolia
 PRIVATE_KEY = ""
 SEPOLIA_RPC_URL = ""
 ETHERSCAN_API_KEY = ""
+GANACE_KEY = ""
 ```
 
 # To run the app
