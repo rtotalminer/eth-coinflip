@@ -27,9 +27,10 @@ contract Coinflip is VRFv2Consumer {
 
     constructor (
         uint64 subscriptionId,
-        address coordinator
+        address coordinator,
+        bytes32 keyHash
     )
-    VRFv2Consumer(subscriptionId, coordinator, address(this)) {  }
+    VRFv2Consumer(subscriptionId, coordinator, keyHash, address(this)) {  }
 
     function calculatePayout(uint256 value) pure internal returns (uint256)
     {

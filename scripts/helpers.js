@@ -18,9 +18,9 @@ async function verifyContract(_address, _constructorArguments)
     else return true;
 }
 
-async function deployContract(_contract, _constructorArguments)
+async function deployContract(_contractName, _constructorArguments)
 {
-    const contract = await hre.ethers.deployContract(_contract, _constructorArguments);
+    const contract = await hre.ethers.deployContract(_contractName, _constructorArguments);
     
     if (contract == undefined) return false;
 
