@@ -89,7 +89,7 @@ describe("VRFv2Consumer w/VRFCoordinatorV2.", async function () {
                     this.VRFCoordinatorV2Mock,
                     "RandomWordsRequested"
                 )
-            })
+            });
 
             it("Should successfully request a random number and get a result", async function () {                
                 const transaction = await this.VRFv2Consumer.requestRandomWords();
@@ -115,10 +115,10 @@ describe("VRFv2Consumer w/VRFCoordinatorV2.", async function () {
                 assert(
                     randomWords[1] > 0,
                     "Second random number is greater than zero"
-                )
-            })
-        })
-    })
+                );
+            });
+        });
+    });
 });
 
 (developmentChains.includes(networkName)) ?

@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
-  entry:  './src/index.js',
+  entry:  './src/index.tsx',
   output: {
     filename: 'bundle.[hash].js',
     path: path.resolve(__dirname, 'dist'),
@@ -31,6 +31,11 @@ module.exports = {
         type: 'asset/resource',
       },
       {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         use: {
@@ -41,5 +46,8 @@ module.exports = {
         }
       },
     ],
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
   },
 };

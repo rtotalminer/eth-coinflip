@@ -15,7 +15,8 @@ interface INetworkConfig {
     subscriptionId?: string,
     fee?: string,
     fundAmount: BigNumberish, // 0.1
-    automationUpdateInterval?: string
+    automationUpdateInterval?: string,
+    url?: string
 }
 
 export const networkConfigs : Record<number, INetworkConfig> = {
@@ -26,7 +27,7 @@ export const networkConfigs : Record<number, INetworkConfig> = {
         keyHash: "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
         jobId: "29fa9aa13bf1468788b7cc4a500a45b8",
         fundAmount: "1000000000000000000",
-        automationUpdateInterval: "30",
+        automationUpdateInterval: "30"
     },
     5777: {
         name: "ganache",
@@ -37,6 +38,7 @@ export const networkConfigs : Record<number, INetworkConfig> = {
         fundAmount: "1000000000000000000",
         automationUpdateInterval: "30",
         ethUsdPriceFeed: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+        url: "localhost:5777"
     },
     1: {
         name: "mainnet",
