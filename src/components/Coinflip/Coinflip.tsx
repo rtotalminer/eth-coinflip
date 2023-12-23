@@ -1,6 +1,110 @@
-// import { ethers } from "ethers";
-import React from 'react';
-// import "./Coinflip.css";
+import { useState } from 'react';
+import CoinflipAnime from './CoinflipAnime'
+import './coinflip.css';
+
+//import goldcoinImg from '../assets/img/goldcoin.jpg';
+
+const Coinflip = () => {
+  var [amount, setAmount] = useState<string>('');
+
+  async function fireCoinflip(amount: string) {
+    // Your coinflip logic here
+    console.log(`Flipping coin with amount: ${amount}`);
+    // Add your logic for flipping the coin or any other actions
+  }
+
+  return (
+    <div className='coinflipContainer'>
+      <CoinflipAnime/>
+
+      <div>
+        <input
+          type="text"
+          className="roundedInput" // Adjust the width and margin as needed
+          placeholder="Enter something"
+          value={amount}
+          onChange={(event) => setAmount(event.target.value)}
+        />
+
+        <button onClick={() => fireCoinflip(amount)}>Flip Coin</button>
+      </div>
+    </div>
+  );
+};
+
+export default Coinflip;
+
+
+
+      {/* <div className="coinflip-container">
+        <>
+          <div className="coinflip"  onClick={() => fireCoinflip(amount)}>
+          <img
+            src={Icon}
+            height="107"
+            width="120" />
+          </div>
+        </>
+        <>
+        <input
+          type="text"
+          className="rounded-input"
+          placeholder="Enter something"
+          
+          onChange={handleInputChange}
+        />
+      </>
+      </div> */}
+
+
+  // const { dataStore, signer } = props;
+  // const coinflipABI = dataStore.coinflipABI;//await getABI(COINFLIP_ADDR);
+
+  // var coinflip = undefined;
+  // try {
+  //   let _coinflip =  new ethers.Contract(COINFLIP_ADDR, coinflipABI, signer);  
+  //   coinflip = _coinflip;
+  // }
+  // catch (err) {
+  //   console.log("error: ", err);
+  // } 
+
+  // var [amount, setAmount] = React.useState(0);
+  // const [debts, setDebts] = React.useState("0");
+  // var [coinIsFlipping, setCoinIsFlipping] = React.useState(false);
+
+
+  // React.useEffect(() => {
+  //   // React advises to declare the async function directly inside useEffect
+  //   async function setVars() {
+  //     let accounts = await getAccounts();
+  //     let _debts = await coinflip.debts(accounts[0]);
+  //     let debts_ = ethers.formatEther(_debts.toString());
+  //     setDebts(debts_);
+      
+  //     let coinflipFired = await hasCoinflipFired();
+  //     if (coinflipFired === true) {
+  //       playAnimation();
+  //     }
+    
+  //   };
+
+  //   if (coinflip) {
+  //     setVars();
+  //   }
+
+
+  // }, []);
+
+  // const handleInputChange = (event) => {
+  //   // Ensure the input value is a valid number
+  //   const newValue = event.target.value;//.replace(/\D/g, '');
+
+  //   // Update the amount state
+  //   setAmount(newValue);
+  // };
+
+  // import "./Coinflip.css";
 // import { attachContract, checkConnection, getABI, getAccounts } from '../../utils/helpers';
 // import { COINFLIP_ADDR } from '../../config';
 
@@ -71,80 +175,3 @@ import React from 'react';
 
   
 // }
-
-const Coinflip = () => {
-
-  // const { dataStore, signer } = props;
-  // const coinflipABI = dataStore.coinflipABI;//await getABI(COINFLIP_ADDR);
-
-  // var coinflip = undefined;
-  // try {
-  //   let _coinflip =  new ethers.Contract(COINFLIP_ADDR, coinflipABI, signer);  
-  //   coinflip = _coinflip;
-  // }
-  // catch (err) {
-  //   console.log("error: ", err);
-  // } 
-
-  // var [amount, setAmount] = React.useState(0);
-  // const [debts, setDebts] = React.useState("0");
-  // var [coinIsFlipping, setCoinIsFlipping] = React.useState(false);
-
-
-  // React.useEffect(() => {
-  //   // React advises to declare the async function directly inside useEffect
-  //   async function setVars() {
-  //     let accounts = await getAccounts();
-  //     let _debts = await coinflip.debts(accounts[0]);
-  //     let debts_ = ethers.formatEther(_debts.toString());
-  //     setDebts(debts_);
-      
-  //     let coinflipFired = await hasCoinflipFired();
-  //     if (coinflipFired === true) {
-  //       playAnimation();
-  //     }
-    
-  //   };
-
-  //   if (coinflip) {
-  //     setVars();
-  //   }
-
-
-  // }, []);
-
-  // const handleInputChange = (event) => {
-  //   // Ensure the input value is a valid number
-  //   const newValue = event.target.value;//.replace(/\D/g, '');
-
-  //   // Update the amount state
-  //   setAmount(newValue);
-  // };
-
-  return (
-    <>
-      {/* <div className="coinflip-container">
-        <>
-          <div className="coinflip"  onClick={() => fireCoinflip(amount)}>
-          <img
-            src={Icon}
-            height="107"
-            width="120" />
-          </div>
-        </>
-        <>
-        <input
-          type="text"
-          className="rounded-input"
-          placeholder="Enter something"
-          
-          onChange={handleInputChange}
-        />
-      </>
-      </div> */}
-
-    </>
-  );
-};
-
-export default Coinflip;

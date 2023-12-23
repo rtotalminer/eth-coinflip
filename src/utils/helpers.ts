@@ -4,8 +4,15 @@ export async function handleConnection() {
     if (window.ethereum) {
         const provider = new ethers.BrowserProvider(window.ethereum)
         const signer = await provider.getSigner();
-        console.log(signer);
-        const accounts = await 1;
+        const accounts = await signer.getAddress();
+        return { provider, signer, accounts };
+    }
+    else {
+        const provider = new ethers.JsonRpcProvider();
+        const signer = await provider.getSigner();
+        const accounts = await signer.getAddress();
+        return { provider, signer, accounts };
+        
     }
 }
 
