@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from "react";
 
 export const Store = <Type>(initialState: Type) => {
     let state = initialState;
@@ -36,8 +37,23 @@ export const Store = <Type>(initialState: Type) => {
     };
 };
 
+interface IStore {
+    subscribe(listener: () => void) : any;
+    getSnapshot() : any;
+    getServerSnapshot() : any;
+}
+
+export function syncStore(_store: IStore) {
+    return useSyncExternalStore(
+        _store.subscribe,
+        _store.getSnapshot,
+        _store.getServerSnapshot
+    );  
+}
+
 export const UserStore = Store({
   accounts: [],
-  provider: {}
+  provider: {},
+  signer: {}
 });
 
