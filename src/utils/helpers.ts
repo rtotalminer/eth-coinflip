@@ -12,7 +12,7 @@ export async function handleConnection() {
         const signer = await provider.getSigner();
         const accounts = await signer.getAddress();
         return { provider, signer, accounts };
-        
+   
     }
 }
 

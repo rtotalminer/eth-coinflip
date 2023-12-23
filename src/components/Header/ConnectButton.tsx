@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { UserStore, syncStore } from "../../data/store";
 import { handleConnection } from "../../utils/helpers";
+import { disconnect } from "process";
 
 const ConnectButton = () => {
 
@@ -13,6 +14,10 @@ const ConnectButton = () => {
         UserStore.setState({accounts: accounts, signer: signer, provider: provider});
     }
 
+    async function disconnectWallet() {
+        UserStore.setState({accounts: [], signer: {}, provider: {}});
+    }
+
     const connectButton = <>
         <button onClick={() => {connectWallet()}}>
             Connect
@@ -20,7 +25,7 @@ const ConnectButton = () => {
     </>
 
     const showAccount = <>
-        <span className='accountInfo'>
+        <span className='accountInfo' onClick={() => {disconnectWallet()}}>
             {userStore.accounts.toString().substring(0,6)}...
             {userStore.accounts.toString().substring(
                 userStore.accounts.toString().length - 4,
