@@ -5,7 +5,7 @@ import { networkConfigs } from "../../config/config";
 import _COINFLIP_ABI from '../../artifacts/contracts/Coinflip.sol/Coinflip.json'
 
 
-export const COINFLIP_ADDR : string = "0x343b3C16Fb01782ef82A860c204F0BA32212027d";
+export const COINFLIP_ADDR : string = "0x7513A6831954CBf42138DDC7efd06b27AA188514";
 export const COINFLIP_ABI = new Interface(_COINFLIP_ABI.abi);
 
 export const NETWORK = networkConfigs[0];

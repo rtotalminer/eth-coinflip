@@ -23,6 +23,9 @@ async function fixture() {
       [VRFCoordinatorV2Mock.target, keyHash]);
     await VRFv2SubscriptionManager.waitForDeployment();
 
+    const fundAmount = "1000000000000000000"; 
+    await VRFv2SubscriptionManager.topUpSubscription(fundAmount);
+
     const subscriptionId = await VRFv2SubscriptionManager.s_subscriptionId();
 
     const Coinflip = await hre.ethers.deployContract("Coinflip", [subscriptionId, VRFCoordinatorV2Mock.target, keyHash]);
@@ -30,7 +33,7 @@ async function fixture() {
 
     await VRFv2SubscriptionManager.addConsumer(Coinflip.target);
 
-    return { Coinflip, VRFv2SubscriptionManager, owner, addr1, addr2 }
+    return { Coinflip, VRFv2SubscriptionManager, VRFCoordinatorV2Mock, owner, addr1, addr2 }
 
   }
 }
@@ -47,10 +50,14 @@ describe('Coinflip', async function () {
             const consumers = await this.VRFv2SubscriptionManager.getConsumers();
             expect(consumers).to.include(this.Coinflip.target, 'Coinflip should be added');
         });
+        it('its subscription manager should be funded.', async function () {
+          const consumers = await this.VRFv2SubscriptionManager.getConsumers();
+          expect(consumers).to.include(this.Coinflip.target, 'Coinflip should be added');
+      });
     });
 
     describe('flip', async function () {
-        it('should allow players to place bets and receive payouts on correct prediction', async function () {
+        it('should allow players to place bets and resolve', async function () {
             const playerCoinflip = await hre.ethers.getContractAt("Coinflip", this.Coinflip.target, this.addr1);
 
             const tx = await playerCoinflip.flip(0, { value: parseEther("1.0") });
@@ -59,8 +66,18 @@ describe('Coinflip', async function () {
             const requestSentEvent = receipt?.logs?.find((event: any) => event.eventName === "RequestSent");
             expect(requestSentEvent).to.not.be.undefined;
 
-            const requestId = (requestSentEvent?.data) ? parseInt(requestSentEvent?.data, 16) : -1;
-            expect(requestId).to.not.equal(-1);
+            const requestId = receipt?.logs[0].topics[2]
+            expect(requestId).to.not.be.undefined;;
+
+            // simulate callback from the oracle network
+            await expect(
+              this.VRFCoordinatorV2Mock.fulfillRandomWords(requestId, this.Coinflip.target)
+            ).to.emit(this.Coinflip, "RequestFulfilled");
+
+            assert(
+                this.Coinflip.bets(requestId).CoinDecision = (1 | 0),
+                "The decision has resolved to either heads or tails"
+            );
           });
         
         // Will fail if ran w/ debugger as randomness will be fulfilled due to automining

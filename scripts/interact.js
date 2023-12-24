@@ -22,7 +22,14 @@ task("topupSubscription", "Top up the funds for a VRFv2SubscriptionManager.")
   .setAction(async (args, hre) => {
   });
 
-
+task("fulfillRandomWords", "Manually fulfill random words of a request.")
+  .addParam("addr1", "The VRF Coordinatr address.")
+  .addParam("addr2", "The VRF Coonsumer address.")
+  .addParam("requestId", "The request ID to fulfill.")
+  .setAction(async (args, hre) => {
+    let VRFCoordinatorV2Mock = hre.getContractAt("Coinflip", this.addr1);
+    await VRFCoordinatorV2Mock.fulfillRandomWords(requestId, addr2);
+  });
 
 
 

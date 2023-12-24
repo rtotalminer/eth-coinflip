@@ -16,6 +16,11 @@ import "../assets/img/spinning-coin2.png";
 import "../assets/img/spinning-coin3.png";
 import "../assets/img/spinning-coin4.png";
 
+import "../assets/img/error.gif"
+
+import './App.css';
+import { IMG_FOLDER } from "../utils/config";
+
 const App = () => {
 
     window.ethereum.on('chainChanged', handleChainChanged);
@@ -51,14 +56,6 @@ const App = () => {
             .catch(console.error);
       }, []);
 
-    useEffect(() => {
-        if (userStore.accounts[0] == undefined)
-            setIsConnected(false);
-        else (userStore.accounts[0] != undefined) 
-            setIsConnected(true);
-    },
-    [userStore.provider])
-
 
   
     return (
@@ -66,10 +63,11 @@ const App = () => {
             <>
                 <Header loading={loading} />
                 {
-                    (!loading && isConnected) ?
+                    (!loading && userStore.accounts[0] != undefined) ?
                     <Coinflip /> :
-                    <div>
-                        <h1>Connection to blockchain not found.</h1>
+                    <div className="centre">
+                
+                        <span className="centre color-red">You're not connected.</span>
                     </div>
                 }
             </>

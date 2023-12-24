@@ -45,6 +45,10 @@ npm run dev
 .\.venv\Scripts\activate
 ```
 
+```bash
+source ./.venv/bin/activate
+```
+
 # Requirements
 ffmpeg
 ./requirements.txt

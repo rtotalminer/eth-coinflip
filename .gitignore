@@ -18,4 +18,4 @@ node_modules
 .venv
 /frames
 
-.DS_Store
+**/.DS_Store
