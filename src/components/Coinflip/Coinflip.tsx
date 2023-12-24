@@ -9,76 +9,118 @@ import './coinflip.css';
 
 import _COINFLIP_ABI from '../../../artifacts/contracts/Coinflip.sol/Coinflip.json'
 
+// cases:
+
+// user has no flip
+// he clicks flip
+
+// user has flip
+// loads flip
+
+// first get the contract
+
+// on page init check if user has bet
+// if he has then await response and animate
+
+// if he hasnt then create  a newe one and await response and nmiate
 
 
 const Coinflip = () => {
+
+    const userStore = syncStore(UserStore);
+    var coinflipContract: Contract;
+
     const [amount, setAmount] = useState<string>('');  
 
+    // flag to check if there is anmiaton present
     const [isAnimating, setIsAnimating] = useState(false);
-    const [firedCoinflip, setFiredCoinflip] = useState(false); // can override hsplayerbet
 
-    let coinflipContract : any;
-    const userStore = syncStore(UserStore);
+    // flag to check if user has pressed coin
+    const [firedCoinflip, setFiredCoinflip] = useState(false);
+
+    const [ requestId, setRequestId ] = useState(0);
+
+    async function getRequestId() {
+        let _requestId = await coinflipContract.playerIds(userStore.accounts[0]) || 0;
+        return _requestId;
+    }
+
+    async function fireCoinflip() {
+        let tx = await coinflipContract.flip(0, {value: parseEther('0.01')});
+        let receipt = await tx.wait();
+        
+
+    }
 
     useEffect(() => {
-        const load = async () => {
-            let _hasPlayerBet;
-            if (userStore.accounts[0] != undefined) {
-                coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
-                _hasPlayerBet = await coinflipContract.hasPlayerBet(userStore.accounts[0]);
-            }
-            return { _hasPlayerBet };
+        coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
+        const result = async () => {
+            let _requestId = await getRequestId();
+            return { _requestId };
         }
-              
-        load()
-            .then((res) => {
-                setIsAnimating(res._hasPlayerBet);
-            })
-            .catch(console.error);
+        result().then((res) => {
+            console.log(res._requestId);
+            setRequestId(res._requestId);
+        }).catch(console.error);
     }, []);
 
     useEffect(() => {
-        const call = async () => {
-            let res = false;
-            if (userStore.accounts[0] != undefined) {
-                coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
-                const tx = await coinflipContract.flip(
-                    0, // BET HEADS (OR TAILS DOSENt MATTER)
-                    { value: parseEther('0.1') }
-                );
-                const receipt = await tx.wait();
-                const requestSentEvent = receipt?.logs?.find(
-                    (event: any) => event.eventName === "RequestSent"
-                );
+        const result = async () => {
+            let tx = await fireCoinflip();
+        }
+        result().then((res) => {
 
-                const requestId = receipt?.logs[0].topics[2]
+        }).catch(console.error);
+    }, [firedCoinflip])
 
-                // await for fulfillment
+    useEffect(() => {
+        (requestId != 0) ? setIsAnimating(true) : setIsAnimating(false);
+    }, [requestId])
+
+    // useEffect(() => {
+    //     const callFlip = async () => {
+    //         let res = false;
+    //         if (userStore.accounts[0] != undefined) {
+    //             coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
+    //             const tx = await coinflipContract.flip(
+    //                 0, // BET HEADS (OR TAILS DOSENt MATTER)
+    //                 { value: parseEther('0.1') }
+    //             );
+    //             const receipt = await tx.wait();
+    //             const requestSentEvent = receipt?.logs?.find(
+    //                 (event: any) => event.eventName === "RequestSent"
+    //             );
+
+    //             const requestId = receipt?.logs[0].topics[2]
+
+    //             // await for fulfillment
                   
-                  //let coordinatorAddr = coinflipContract.coordinator();
+    //               //let coordinatorAddr = coinflipContract.coordinator();
                   
-                // if (DEV) {
-                //   // simulate callback from the oracle network
-                //   let VRFCoordinatorV2Mock: any;
+    //             // if (DEV) {
+    //             //   // simulate callback from the oracle network
+    //             //   let VRFCoordinatorV2Mock: any;
                
-                //     VRFCoordinatorV2Mock.fulfillRandomWords(requestId, COINFLIP_ADDR)
-                // }
+    //             //     VRFCoordinatorV2Mock.fulfillRandomWords(requestId, COINFLIP_ADDR)
+    //             // }
 
-                // await for event with request id
+    //             // await for event with request id
 
             
-                if (requestSentEvent != undefined)  res = true;  
-            }
-            return { res };
-        }
-        if (firedCoinflip && !isAnimating) {
-            call().then((res) => {
-                setIsAnimating(res.res);
-            }).catch(console.error)
+    //             if (requestId != undefined)  res = true;  
+    //         }
+    //         return { res };
+    //     }
+    //     // new call
+    //     if (firedCoinflip && !isAnimating) {
+    //       callFlip().then((res) => {
+    //             setIsAnimating(res.res);
+    //         }).catch(console.error)
         
-          if(!firedCoinflip && isAnimating) {}
-        };
-    }, [firedCoinflip])
+    //         // already processed call
+    //       if(firedCoinflip && isAnimating) {}
+    //     };
+    // }, [firedCoinflip])
 
   return (
     <div className='coinflipContainer'>

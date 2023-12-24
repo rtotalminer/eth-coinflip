@@ -22,6 +22,7 @@ contract Coinflip is VRFv2Consumer {
     }
 
     mapping(address => bool) public hasPlayerBet;
+    mapping(address => uint256) public playerIds;
     mapping(uint256 => Bet) public bets;
     mapping(address => uint256) public debts;
 
@@ -41,10 +42,11 @@ contract Coinflip is VRFv2Consumer {
     {
         require(_bet == CoinDecision.HEADS || _bet == CoinDecision.TAILS, "The bet must be valid.");
         require(hasPlayerBet[msg.sender] == false, "There is a flip already in progress.");
-
-        hasPlayerBet[msg.sender] = true;
         
         uint256 _requestId = this.requestRandomWords();
+
+        hasPlayerBet[msg.sender] = true;
+        playerIds[msg.sender] = _requestId;
 
         Bet memory bet = Bet(
             _requestId,
@@ -74,6 +76,7 @@ contract Coinflip is VRFv2Consumer {
         
         bets[_requestId].outcome = decision;
         hasPlayerBet[bets[_requestId].player] = false;
+        playerIds[bets[_requestId].player] = 0;
         
         super.fulfillRandomWords(_requestId, _randomWords);
     }

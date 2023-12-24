@@ -4,7 +4,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import hre from "hardhat";
 
 import { assert, expect } from "chai";
-import { networkConfigs, developmentChains, BASE_FEE, GAS_PRICE_LINK } from "../config/config";
+import { networkConfigs, developmentChains, BASE_FEE, GAS_PRICE_LINK } from "../utils/config";
 
 const chainId : number = (hre.network.config.chainId == undefined) ? 0 : hre.network.config.chainId;
 const networkName : string = hre.network.name;

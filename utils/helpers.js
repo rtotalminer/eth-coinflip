@@ -5,7 +5,7 @@ const axios = require("axios");
 
 require("dotenv").config()
 
-const { SEPOLIA_LINK_ADDR } = require("../config/config");
+const { SEPOLIA_LINK_ADDR } = require("./config");
 
 async function verifyContract(_address, _constructorArguments)
 {

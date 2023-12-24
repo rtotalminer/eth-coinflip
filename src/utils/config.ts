@@ -1,11 +1,11 @@
 
 import { Interface } from "ethers";
 
-import { networkConfigs } from "../../config/config";
+import { networkConfigs } from "../../utils/config";
 import _COINFLIP_ABI from '../../artifacts/contracts/Coinflip.sol/Coinflip.json'
 
 
-export const COINFLIP_ADDR : string = "0xCDfaFeBC280016FBA382630c68A9fEbc7Fce503B";
+export const COINFLIP_ADDR : string = "0x02CD739dB5bbd034D5d264ea83C797e69bb836bb";
 export const COINFLIP_ABI = new Interface(_COINFLIP_ABI.abi);
 
 export const NETWORK = networkConfigs[0];

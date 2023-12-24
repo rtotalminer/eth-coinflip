@@ -1,7 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import hre from "hardhat";
 import { assert, expect } from "chai";
-import { networkConfigs, developmentChains, BASE_FEE, GAS_PRICE_LINK } from "../config/config";
+import { networkConfigs, developmentChains, BASE_FEE, GAS_PRICE_LINK } from "../utils/config";
 import { parseEther } from "ethers";
 
 const chainId: number = (hre.network.config.chainId == undefined) ? 0 : hre.network.config.chainId;
@@ -93,6 +93,10 @@ describe('Coinflip', async function () {
         // Will fail if ran w/ debugger as randomness will be fulfilled due to automining
         it('should not allow multiple bets from the same player simultaneously', async function () {
             const playerCoinflip = await hre.ethers.getContractAt("Coinflip", this.Coinflip.target, this.addr1);
+
+            const tx = await playerCoinflip.flip(0, { value: parseEther("1.0") });
+            const receipt = await tx.wait();
+            
             await expect(playerCoinflip.flip(0, { value: parseEther("1.0") })).
                 to.be.revertedWith('There is a flip already in progress.');
         });
