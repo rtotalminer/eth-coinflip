@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Contract, ethers, parseEther } from 'ethers';
 
 import { UserStore, syncStore } from '../../utils/store';
-import { COINFLIP_ADDR, COINFLIP_ABI } from '../../utils/config';
+import { COINFLIP_ADDR, COINFLIP_ABI, DEV } from '../../utils/config';
 
 import CoinAnimation from './CoinAnimation';
 import './coinflip.css';
@@ -50,6 +50,23 @@ const Coinflip = () => {
                 const requestSentEvent = receipt?.logs?.find(
                     (event: any) => event.eventName === "RequestSent"
                 );
+
+                const requestId = receipt?.logs[0].topics[2]
+
+                // await for fulfillment
+                  
+                  //let coordinatorAddr = coinflipContract.coordinator();
+                  
+                if (DEV) {
+                  // simulate callback from the oracle network
+                  let VRFCoordinatorV2Mock: any;
+               
+                    VRFCoordinatorV2Mock.fulfillRandomWords(requestId, COINFLIP_ADDR)
+                }
+
+                // await for event with request id
+
+            
                 if (requestSentEvent != undefined)  res = true;  
             }
             return { res };
@@ -58,6 +75,8 @@ const Coinflip = () => {
             call().then((res) => {
                 setIsAnimating(res.res);
             }).catch(console.error)
+        
+          if(!firedCoinflip && isAnimating) {}
         };
     }, [firedCoinflip])
 

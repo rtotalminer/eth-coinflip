@@ -26,7 +26,7 @@ contract VRFv2Consumer is VRFConsumerBaseV2, Ownable
 
     // https://docs.chain.link/docs/vrf/v2/subscription/supported-networks/#configurations
     uint64 public s_subscriptionId;
-    address coordinator;
+    address public coordinator;
     bytes32 keyHash;
     uint32 callbackGasLimit = 2500000;
     uint16 requestConfirmations = 3;

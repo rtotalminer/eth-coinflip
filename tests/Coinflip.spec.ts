@@ -32,7 +32,12 @@ async function fixture() {
     await Coinflip.waitForDeployment();
 
     await VRFv2SubscriptionManager.addConsumer(Coinflip.target);
-
+    
+    console.log({
+      Coinflip: Coinflip.target,
+      VRFv2SubscriptionManager: VRFv2SubscriptionManager.target,
+      VRFCoordinatorV2Mock: VRFCoordinatorV2Mock.target
+    });
     return { Coinflip, VRFv2SubscriptionManager, VRFCoordinatorV2Mock, owner, addr1, addr2 }
 
   }
@@ -42,6 +47,7 @@ describe('Coinflip', async function () {
 
   before(async function () {
     Object.assign(this, await fixture());
+    
   });
 
   
@@ -67,15 +73,19 @@ describe('Coinflip', async function () {
             expect(requestSentEvent).to.not.be.undefined;
 
             const requestId = receipt?.logs[0].topics[2]
-            expect(requestId).to.not.be.undefined;;
+            expect(requestId).to.not.be.undefined;
 
             // simulate callback from the oracle network
             await expect(
               this.VRFCoordinatorV2Mock.fulfillRandomWords(requestId, this.Coinflip.target)
             ).to.emit(this.Coinflip, "RequestFulfilled");
 
+            // subscribe adn liste for consumer request fulfilled
+
+            let decision = (await this.Coinflip.bets(requestId))[4];
+
             assert(
-                this.Coinflip.bets(requestId).CoinDecision = (1 | 0),
+                decision <= 1,
                 "The decision has resolved to either heads or tails"
             );
           });

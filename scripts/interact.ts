@@ -1,34 +1,35 @@
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 const { task, types } = require("hardhat/config");
 
-task("addConsumer", "Add a consumer to a VRFv2SubscriptionManager.")
-  .addParam("addr1", "The VRFv2SubscriptionManager's contract address.")
-  .addParam("addr2", "The Coinflip's contract address.")
-  .addVariadicPositionalParam("constructorArgs", "The contract's constructor arguements.")
-  .setAction(async (args, hre) => {
-    const VRFv2SubscriptionManager = new hre.ethers.Contract.attach(args.addr1);
-    const Coinflip = new hre.ethers.Contract.attach(args.addr2);
-    VRFv2SubscriptionManager.addConsumer(coinflip.target);
-  });
+// task("addConsumer", "Add a consumer to a VRFv2SubscriptionManager.")
+//   .addParam("addr1", "The VRFv2SubscriptionManager's contract address.")
+//   .addParam("addr2", "The Coinflip's contract address.")
+//   .addVariadicPositionalParam("constructorArgs", "The contract's constructor arguements.")
+//   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+//     const VRFv2SubscriptionManager = new hre.ethers.Contract.attach(args.addr1);
+//     const Coinflip = new hre.ethers.Contract.attach(args.addr2);
+//     VRFv2SubscriptionManager.addConsumer(coinflip.target);
+//   });
 
 task("sendLink", "Send a given amount of LINK tokens to an address.")
   .addParam("addr1", "The contract address.")
   .addParam("value", "The amount of LINK.")
-  .setAction(async (args, hre) => {
+  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
   });
 
 task("topupSubscription", "Top up the funds for a VRFv2SubscriptionManager.")
   .addParam("addr1", "The VRFv2SubscriptionManager's contract address.")
-  .setAction(async (args, hre) => {
+  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
   });
 
 task("fulfillRandomWords", "Manually fulfill random words of a request.")
-  .addParam("addr1", "The VRF Coordinatr address.")
+  .addParam("addr1", "The VRF Coordinator address.")
   .addParam("addr2", "The VRF Coonsumer address.")
   .addParam("requestId", "The request ID to fulfill.")
-  .setAction(async (args, hre) => {
-    let VRFCoordinatorV2Mock = hre.getContractAt("Coinflip", this.addr1);
-    await VRFCoordinatorV2Mock.fulfillRandomWords(requestId, addr2);
+  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+    let VRFCoordinatorV2Mock = await hre.ethers.getContractAt("VRFCoordinatorV2Mock", args.addr1);
+    await VRFCoordinatorV2Mock.fulfillRandomWords(args.requestId, args.addr2);
   });
 
 

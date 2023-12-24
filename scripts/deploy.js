@@ -1,5 +1,6 @@
 const { task, types } = require("hardhat/config");
 
+
 task("deploy", "Generic contract deployment script.")
   .addParam("contract", "The contract's artifact name.")
   .addVariadicPositionalParam("constructorArgs", "The contract's constructor arguements.")
@@ -9,3 +10,4 @@ task("deploy", "Generic contract deployment script.")
     await contract.waitForDeployment();
     console.log(`Contract deployed to ${contract.target}`);
   });
+
