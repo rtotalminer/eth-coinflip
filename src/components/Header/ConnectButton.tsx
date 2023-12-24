@@ -1,6 +1,6 @@
 // src/components/Connect.tsx
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UserStore, syncStore } from "../../data/store";
 import { handleConnection } from "../../utils/helpers";
 
@@ -29,16 +29,12 @@ const ConnectButton = () => {
         </span>
     </>
 
-    useEffect(() => {
-        
-    }, []);
-
     return (
         <>
-            { userStore.accounts[0] == undefined ?
+             { userStore.accounts[0] == undefined ?
                 connectButton :
                 showAccount
-            }
+            } 
         </>
     );
 };

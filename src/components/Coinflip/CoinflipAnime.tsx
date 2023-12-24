@@ -1,10 +1,8 @@
 
 import { useEffect, useRef } from 'react';
 import './coinflip.css';
-import { ISpriteConfig, SpriteBase } from '../../utils/SpriteBase';
-
-import "../../assets/img/goldcoin.jpg";
-import "../../assets/img/spritesheet.png";
+import {SpriteBase } from '../../utils/SpriteBase';
+import CoinAnimation from './CoinAnimation';
 
 var coin : any;
 var canvas : any;
@@ -22,35 +20,45 @@ const CoinflipAnime = () => {
         canvas = canvasRef.current;
         ctx = canvas?.getContext("2d");
 
-        const spriteConfig = {
-            filename: "src/assets/img/goldcoin.jpg",
-            xOffset: 0,
-            spriteRows: 1,
-            spriteCols: 1,
-            spriteWidth: 200,
-            spriteHeight: 200,
-            srcX: 0,
-            srcY: 0,
-            spritePosX: 0,
-            spritePosY: 0
-        };
+        // const spriteConfig = {
+        //     filename: "src/assets/img/spritesheet.png",
+        //     xOffset: 0,
+        //     spriteRows: 4, // backwards lol
+        //     spriteCols: 1,
+        //     spriteWidth: 0, // these get determined...
+        //     spriteHeight: 0,
+        //     srcX: 0,
+        //     srcY: 0,
+        //     spritePosX: 0,
+        //     spritePosY: 0
+        // };
         
-        const rect = {
-            x: 0,
-            y: 0,
-            w: 256,
-            h: 256
-        }
+        // const rect = {
+        //     x: 0,
+        //     y: 0,
+        //     w: 256,
+        //     h: 256
+        // }
 
-        coin = new SpriteBase(rect, spriteConfig);
+        // coin = new SpriteBase(rect, spriteConfig);
+
+        coin = new SpriteBase(
+            0,
+            0,
+            256,
+            256,
+            'goldcoinv2_0.png'
+        ); 
 
         setInterval(main, 1000 / 50);
     }, [])
     
 
     return (
-        <div className='coinContainer'>
-            <canvas ref={canvasRef} width='256px' height={'256px'}></canvas>
+        <div onClick={() => {console.log("hello World!")}} className='coinContainer'>
+            <canvas className='canvas' ref={canvasRef} width='256px' height={'256px'}></canvas>
+
+            {/* <CoinAnimation/> */}
         </div>
   );
 };

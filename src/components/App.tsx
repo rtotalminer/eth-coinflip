@@ -4,6 +4,17 @@ import { UserStore, syncStore } from "../data/store";
 import Header from "./Header/Header";
 import Coinflip from "./Coinflip/Coinflip";
 
+import "../assets/img/goldcoin.png";
+import "../assets/img/spritesheet.png";
+
+import "../assets/img/goldcoinv2_0.png";
+import "../assets/img/goldcoinv2_1.png";
+import "../assets/img/goldcoinv2_2.png";
+
+import "../assets/img/spinning-coin.png";
+import "../assets/img/spinning-coin2.png";
+import "../assets/img/spinning-coin3.png";
+import "../assets/img/spinning-coin4.png";
 
 const App = () => {
 
@@ -40,13 +51,11 @@ const App = () => {
   
     return (
         <div>
-          {!loading && (
             <>
               <Header />
               <Coinflip />
               {/* Add other components as needed */}
             </>
-          )}
         </div>
     );
 };

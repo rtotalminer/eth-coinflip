@@ -1,59 +1,58 @@
+import { IMG_FOLDER } from "../config";
 
-export interface IRect {
-    x: number
-    y: number
-    w: number
-    h: number
-}
-
-export interface ISpriteConfig {
+export class SpriteBase {
+    x: number;
+    y: number;
+    w: number;
+    h: number;
     filename: string;
-    xOffset: number;
+    spriteSheet: HTMLImageElement;
     spriteRows: number;
     spriteCols: number;
     spriteWidth: number;
     spriteHeight: number;
     srcX: number;
     srcY: number;
-    spritePosX: number;
-    spritePosY: number;
-}
-
-export class SpriteBase {
-
-    spriteConfig: ISpriteConfig;
-    rect: IRect;
-    spriteSheet: HTMLImageElement;
+    enableHitbox: boolean;
   
-    constructor(_rect: IRect, _spriteConfig: ISpriteConfig) {
-
-        this.spriteConfig = _spriteConfig;
-        this.rect = _rect;
-
-        this.spriteSheet = new Image();
-        this.spriteSheet.src = this.spriteConfig.filename; // Move string literals to config
+    constructor(x: number, y: number, w: number, h: number, filename: string, spriteRows = 1, spriteCols = 1, spritePosX = 0, spritePosY = 0) {
+      this.x = x;
+      this.y = y;
+      this.w = w;
+      this.h = h;
+      this.filename = filename;
   
-        this.spriteConfig.spriteWidth = this.spriteSheet.width 
-            / this.spriteConfig.spriteRows;
-        this.spriteConfig.spriteHeight = this.spriteSheet.height
-            / this.spriteConfig.spriteCols;
+      this.spriteSheet = new Image();
+      this.spriteSheet.src = `${IMG_FOLDER}/${this.filename}`;
   
-        this.spriteConfig.srcX = this.spriteConfig.spritePosX * this.spriteConfig.spriteWidth;
-        this.spriteConfig.srcY = this.spriteConfig.spritePosY * this.spriteConfig.spriteHeight;
+      this.spriteRows = spriteRows;
+      this.spriteCols = spriteCols;
+  
+      this.spriteWidth = this.spriteSheet.width / spriteRows;
+      this.spriteHeight = this.spriteSheet.height / spriteCols;
+  
+      this.srcX = spritePosX * this.spriteWidth;
+      this.srcY = spritePosY * this.spriteHeight;
+  
+      this.enableHitbox = false;
     }
   
-    draw(ctx: any): void {
-      ctx.drawImage(
+    draw(ctx: any) {
+       ctx.drawImage(
         this.spriteSheet,
-        this.spriteConfig.srcX,
-        this.spriteConfig.srcY,
-        this.spriteConfig.spriteWidth,
-        this.spriteConfig.spriteHeight,
-        this.rect.x,
-        this.rect.y,
-        this.rect.w,
-        this.rect.h
+        this.srcX,
+        this.srcY,
+        this.spriteWidth,
+        this.spriteHeight,
+        this.x,
+        this.y,
+        this.w,
+        this.h
       );
+    }  
+  
+    getCentre() {
+      return [this.x + this.w / 2, this.y + this.h / 2];
     }
   }
   

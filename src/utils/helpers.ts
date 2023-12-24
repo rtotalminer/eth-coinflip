@@ -1,14 +1,15 @@
 import { ethers } from "ethers";
+import { DEV, NETWORK } from "../config";
 
 export async function handleConnection() {
-    if (window.ethereum) {
+    if (window.ethereum && !DEV) {
         const provider = new ethers.BrowserProvider(window.ethereum)
         const signer = await provider.getSigner();
         const accounts = await signer.getAddress();
         return { provider, signer, accounts };
     }
     else {
-        const provider = new ethers.JsonRpcProvider();
+        const provider = new ethers.JsonRpcProvider(`http://localhost:7545`);
         const signer = await provider.getSigner();
         const accounts = await signer.getAddress();
         return { provider, signer, accounts };

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import CoinflipAnime from './CoinflipAnime'
 import './coinflip.css';
+import CoinAnimation from './CoinAnimation';
 
 //import goldcoinImg from '../assets/img/goldcoin.jpg';
 
 const Coinflip = () => {
   var [amount, setAmount] = useState<string>('');
-
+  var [ isCoinAnime, setIsCoinAnime ] = useState(false)
+;
   async function fireCoinflip(amount: string) {
     // Your coinflip logic here
     console.log(`Flipping coin with amount: ${amount}`);
@@ -15,18 +17,15 @@ const Coinflip = () => {
 
   return (
     <div className='coinflipContainer'>
-      <CoinflipAnime/>
-
+      <CoinAnimation  isCoinAnime={isCoinAnime} setIsCoinAnime={setIsCoinAnime}/>
       <div>
         <input
           type="text"
           className="roundedInput" // Adjust the width and margin as needed
-          placeholder="Enter something"
+          placeholder="Enter bet"
           value={amount}
           onChange={(event) => setAmount(event.target.value)}
         />
-
-        <button onClick={() => fireCoinflip(amount)}>Flip Coin</button>
       </div>
     </div>
   );

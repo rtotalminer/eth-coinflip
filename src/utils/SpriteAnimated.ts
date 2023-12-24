@@ -1,10 +1,26 @@
 
-// import { Rect, SpriteBase, SpriteConfig } from "./SpriteBase";
+// import { IRect, SpriteBase, ISpriteConfig } from "./SpriteBase";
+
+import { SpriteBase } from "./SpriteBase";
 
 // export class SpriteAnimated extends SpriteBase {
+//   currentFrame
+// }
+
+// export class SpriteAnimated extends SpriteBase {
+  
+//   currentFrame = 0;
+//   framesDrawn = 0;
+//   moveTo = "IDLE";
+//   idle = false;
+//   totalFrames: number;
+//   spriteDirections: any[];
+  
 //   constructor(
-//     _rect: Rect,
-//     _spriteConfig: SpriteConfig,
+//     _rect: IRect,
+//     _spriteConfig: ISpriteConfig,
+//     _spriteRows : number,
+//     _spriteDirections: any[]
 //   ) {
 //     super(_rect, _spriteConfig);
 
@@ -13,8 +29,8 @@
 
 //     this.currentFrame = 0;
 //     this.framesDrawn = 0;
-//     this.totalFrames = spriteRows;
-//     this.spriteDirections = spriteDirections;
+//     this.totalFrames = _spriteRows;
+//     this.spriteDirections = _spriteDirections;
 //   }
 
 //   draw() {

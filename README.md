@@ -38,3 +38,13 @@ To run the development server:
 ```shell
 npm run dev
 ```
+
+# Start Python VENV for Scripts
+
+```powershell
+.\.venv\Scripts\activate
+```
+
+# Requirements
+ffmpeg
+./requirements.txt
