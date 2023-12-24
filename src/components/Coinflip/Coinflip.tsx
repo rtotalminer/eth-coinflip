@@ -57,12 +57,12 @@ const Coinflip = () => {
                   
                   //let coordinatorAddr = coinflipContract.coordinator();
                   
-                if (DEV) {
-                  // simulate callback from the oracle network
-                  let VRFCoordinatorV2Mock: any;
+                // if (DEV) {
+                //   // simulate callback from the oracle network
+                //   let VRFCoordinatorV2Mock: any;
                
-                    VRFCoordinatorV2Mock.fulfillRandomWords(requestId, COINFLIP_ADDR)
-                }
+                //     VRFCoordinatorV2Mock.fulfillRandomWords(requestId, COINFLIP_ADDR)
+                // }
 
                 // await for event with request id
 
