@@ -1,8 +1,9 @@
 
 body {
   background-color: #282829 ;
+  color: white;
 }
 
-*, button {
+*, button, input {
   font-family: 'DM Mono', monospace;
 }

@@ -1,3 +1,4 @@
+
 .float-right {
   float: right;
 }
@@ -14,15 +15,38 @@
 }
 
 .link {
-  display: block;
   color: white;
+}
+
+li {
+  display: block;
   text-align: center;
   padding: 14px 16px;
-  text-decoration: none;
+  cursor: pointer;
 }
 
 .link:hover {
   background-color: #C5BAAF;
   cursor: pointer;
   color: black;
+}
+
+.logo {
+  color: #c60e0e;
+}
+
+.logo {
+	background-image: -webkit-linear-gradient(92deg, #ffef00, #26337b);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	-webkit-animation: hue 1s infinite linear;
+}
+
+@-webkit-keyframes hue {
+  from {
+    -webkit-filter: hue-rotate(0deg);
+  }
+  to {
+    -webkit-filter: hue-rotate(-360deg);
+  }
 }

@@ -68,13 +68,15 @@ const Coinflip = () => {
         setFiredCoinflip={setFiredCoinflip}
       />
       <div>
-        <input
-          type="text"
-          className="roundedInput" // Adjust the width and margin as needed
-          placeholder="Enter bet"
-          value={amount}
-          onChange={(event) => setAmount(event.target.value)}
-        />
+        {(isAnimating) ? <>Awaiting Decision...</> : 
+          <input
+            type="text"
+            className="roundedInput" // Adjust the width and margin as needed
+            placeholder="Enter bet"
+            value={amount}
+            onChange={(event) => setAmount(event.target.value)}
+          />
+        }
       </div>
     </div>
   );
