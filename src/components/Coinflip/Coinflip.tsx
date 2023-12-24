@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Contract, ethers } from 'ethers';
+import { Contract, ethers, parseEther } from 'ethers';
 
 import { UserStore, syncStore } from '../../utils/store';
 import { COINFLIP_ADDR, COINFLIP_ABI } from '../../utils/config';
@@ -7,44 +7,66 @@ import { COINFLIP_ADDR, COINFLIP_ABI } from '../../utils/config';
 import CoinAnimation from './CoinAnimation';
 import './coinflip.css';
 
+import _COINFLIP_ABI from '../../../artifacts/contracts/Coinflip.sol/Coinflip.json'
+
+
 
 const Coinflip = () => {
     const [amount, setAmount] = useState<string>('');  
+
     const [isAnimating, setIsAnimating] = useState(false);
+    const [firedCoinflip, setFiredCoinflip] = useState(false); // can override hsplayerbet
+
     let coinflipContract : any;
     const userStore = syncStore(UserStore);
 
     useEffect(() => {
-        // declare the data fetching function
         const load = async () => {
-            let hasUserBet = false
+            let _hasPlayerBet;
             if (userStore.accounts[0] != undefined) {
-                coinflipContract = new ethers.Contract(COINFLIP_ADDR.toString(), COINFLIP_ABI, userStore.signer);
-                hasUserBet = await coinflipContract.hasPlayerBet(userStore.accounts[0]);
-                console.log(coinflipContract);
+                coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
+                _hasPlayerBet = await coinflipContract.hasPlayerBet(userStore.accounts[0]);
             }
-            return { hasUserBet };
+            return { _hasPlayerBet };
         }
               
         load()
             .then((res) => {
-                setIsAnimating(res.hasUserBet);
+                setIsAnimating(res._hasPlayerBet);
             })
             .catch(console.error);
-
-
     }, []);
 
-
-  async function fireCoinflip(amount: string) {
-    // Your coinflip logic here
-    console.log(`Flipping coin with amount: ${amount}`);
-    // Add your logic for flipping the coin or any other actions
-  }
+    useEffect(() => {
+        const call = async () => {
+            let res = false;
+            if (userStore.accounts[0] != undefined) {
+                coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
+                const tx = await coinflipContract.flip(
+                    0, // BET HEADS (OR TAILS DOSENt MATTER)
+                    { value: parseEther('0.1') }
+                );
+                const receipt = await tx.wait();
+                const requestSentEvent = receipt?.logs?.find(
+                    (event: any) => event.eventName === "RequestSent"
+                );
+                if (requestSentEvent != undefined)  res = true;  
+            }
+            return { res };
+        }
+        if (firedCoinflip && !isAnimating) {
+            call().then((res) => {
+                setIsAnimating(res.res);
+            }).catch(console.error)
+        };
+    }, [firedCoinflip])
 
   return (
     <div className='coinflipContainer'>
-      <CoinAnimation  isAnimating={isAnimating} setIsAnimating={setIsAnimating}/>
+      <CoinAnimation 
+        isAnimating={isAnimating}
+        setFiredCoinflip={setFiredCoinflip}
+      />
       <div>
         <input
           type="text"

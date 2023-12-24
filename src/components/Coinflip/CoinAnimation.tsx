@@ -7,10 +7,12 @@ import './coinflip.css';
 
 interface CoinflipProps {
   isAnimating: boolean;
-  setIsAnimating: Dispatch<SetStateAction<boolean>>;
+  setFiredCoinflip: Dispatch<SetStateAction<boolean>>;
 }
 
-const CoinAnimation: React.FunctionComponent<CoinflipProps> = ({isAnimating, setIsAnimating }: CoinflipProps) => {
+const CoinAnimation: React.FunctionComponent<CoinflipProps> = ({
+  isAnimating, setFiredCoinflip
+}: CoinflipProps) => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -26,14 +28,16 @@ const CoinAnimation: React.FunctionComponent<CoinflipProps> = ({isAnimating, set
     return () => clearInterval(interval); // Cleanup on component unmount
   }, [isAnimating, currentIndex]);
 
+
   const coinImages = [
     'goldcoinv2_0', 'goldcoinv2_1', 'goldcoinv2_2' /* Add images up to coin_12 */
   ];
 
+
   return (
     <div
-      className='cursor-pointer'
-      onClick={() => { (!isAnimating) ? setIsAnimating(true) : {} }}>
+      className={(!isAnimating) ? 'cursor-pointer' : ''}
+      onClick={() => { (!isAnimating) ? setFiredCoinflip(true) : {}}}>
       <img
         src={`${IMG_FOLDER}/${coinImages[currentIndex]}.png`}
         alt="coin"

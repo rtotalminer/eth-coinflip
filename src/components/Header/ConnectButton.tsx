@@ -19,9 +19,9 @@ const ConnectButton = () => {
     }
 
     const connectButton = <>
-        <button onClick={() => {connectWallet()}}>
-            Connect
-        </button> 
+        <span onClick={() => {connectWallet()}}>
+            <b>Connect</b>
+        </span> 
     </>
 
     const showAccount = <>

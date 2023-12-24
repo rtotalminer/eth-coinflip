@@ -11,7 +11,7 @@ export async function handleConnection() {
     else {
         const provider = new ethers.JsonRpcProvider(`http://localhost:7545`);
         const signer = await provider.getSigner();
-        const accounts = await signer.getAddress();
+        const accounts = [await signer.getAddress()];
         return { provider, signer, accounts };
    
     }

@@ -32,12 +32,16 @@ const App = () => {
     }
 
     const [loading, setLoading] = useState(true);
+    const [isConnected, setIsConnected] = useState(false)
+
+    const userStore = syncStore(UserStore);
 
     useEffect(() => {
         // declare the data fetching function
         const init = async () => {
             const { provider, signer, accounts } = await handleConnection();
             UserStore.setState({accounts: accounts, signer: signer, provider: provider});
+            if (accounts[0] != undefined) {  setIsConnected(true)  }
         }
       
         init()
@@ -45,7 +49,15 @@ const App = () => {
                 setLoading(false);
             })
             .catch(console.error);
-      }, [])
+      }, []);
+
+    useEffect(() => {
+        if (userStore.accounts[0] == undefined)
+            setIsConnected(false);
+        else (userStore.accounts[0] != undefined) 
+            setIsConnected(true);
+    },
+    [userStore.provider])
 
 
   
@@ -54,8 +66,11 @@ const App = () => {
             <>
                 <Header loading={loading} />
                 {
-                    (!loading) ?
-                    <Coinflip /> : <></>
+                    (!loading && isConnected) ?
+                    <Coinflip /> :
+                    <div>
+                        <h1>Connection to blockchain not found.</h1>
+                    </div>
                 }
             </>
         </div>
