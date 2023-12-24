@@ -33,14 +33,12 @@ const CoinAnimation: React.FunctionComponent<CoinflipProps> = ({
     'goldcoinv2_0', 'goldcoinv2_1', 'goldcoinv2_2' /* Add images up to coin_12 */
   ];
 
-
   return (
     <div
       className={(!isAnimating) ? 'cursor-pointer' : ''}
       onClick={() => { (!isAnimating) ? setFiredCoinflip(true) : {}}}>
       <img
         src={`${IMG_FOLDER}/${coinImages[currentIndex]}.png`}
-        alt="coin"
         width={256}
         height={256}
       />

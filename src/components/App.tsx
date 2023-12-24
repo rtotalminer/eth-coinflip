@@ -60,17 +60,16 @@ const App = () => {
   
     return (
         <div>
-            <>
-                <Header loading={loading} />
-                {
-                    (!loading && userStore.accounts[0] != undefined) ?
-                    <Coinflip /> :
-                    <div className="centre">
-                
-                        <span className="centre color-red">You're not connected.</span>
-                    </div>
-                }
-            </>
+            <Header loading={loading} />
+            {
+                (!loading) ?
+                    (userStore.accounts[0] != undefined) ?
+                        <Coinflip /> :
+                        <div className="centre">
+                            <span className="centre color-red">You're not connected.</span>
+                        </div>
+                : <></>
+            }
         </div>
     );
 };
