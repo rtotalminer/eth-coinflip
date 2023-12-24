@@ -1,42 +1,39 @@
 // CoinAnimation.jsx
 
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { IMG_FOLDER } from '../../config';
+import { IMG_FOLDER } from '../../utils/config';
 
 import './coinflip.css';
 
 interface CoinflipProps {
-  isCoinAnime: boolean;
-  setIsCoinAnime: Dispatch<SetStateAction<boolean>>;
+  isAnimating: boolean;
+  setIsAnimating: Dispatch<SetStateAction<boolean>>;
 }
 
-const CoinAnimation: React.FunctionComponent<CoinflipProps> = ({isCoinAnime, setIsCoinAnime }: CoinflipProps) => {
+const CoinAnimation: React.FunctionComponent<CoinflipProps> = ({isAnimating, setIsAnimating }: CoinflipProps) => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const toggleAnimation = () => {
-    setIsAnimating((prev) => !prev);
-  };
 
   useEffect(() => {
     let interval: any;
 
-    if (isAnimating && isCoinAnime) {
+    if (isAnimating) {
       interval = setInterval(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % coinImages.length);
       }, 1000 / 5);
     }
 
     return () => clearInterval(interval); // Cleanup on component unmount
-  }, [isAnimating, currentIndex, isCoinAnime]);
+  }, [isAnimating, currentIndex]);
 
   const coinImages = [
     'goldcoinv2_0', 'goldcoinv2_1', 'goldcoinv2_2' /* Add images up to coin_12 */
   ];
 
   return (
-    <div className="coin-animation" onClick={toggleAnimation}>
+    <div
+      className='cursor-pointer'
+      onClick={() => { (!isAnimating) ? setIsAnimating(true) : {} }}>
       <img
         src={`${IMG_FOLDER}/${coinImages[currentIndex]}.png`}
         alt="coin"

@@ -6,7 +6,11 @@ import ConnectButton from "./ConnectButton";
 
 import './header.css';
 
-const Header = () => {
+interface HeaderProps {
+    loading: boolean;
+  }
+  
+const Header: React.FunctionComponent<HeaderProps> = ({loading}: HeaderProps) => {
 
     useEffect(() => {
         
@@ -19,7 +23,7 @@ const Header = () => {
                 <li className="float-left link">Gaming</li>
                 <li className="float-left link">Governance</li>
                 <li className="float-left link">About</li>
-                <li className="float-right link"><ConnectButton/></li>
+                { (!loading) ? <li className="float-right link"><ConnectButton/></li> : <></> }
             </ul>
         </div>
     );

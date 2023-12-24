@@ -35,7 +35,7 @@ async function fixture() {
 describe('VRFv2SubscriptionManager', async function () {
     
     before(async function () {
-        Object.assign(this, await loadFixture(fixture));
+        Object.assign(this, await fixture());
     });
     
     it('should initialize with a non-zero subscription ID and the correct owner', async function () {

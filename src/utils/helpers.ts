@@ -1,5 +1,5 @@
-import { ethers } from "ethers";
-import { DEV, NETWORK } from "../config";
+import { JsonRpcApiProviderOptions, ethers } from "ethers";
+import { DEV, NETWORK } from "./config";
 
 export async function handleConnection() {
     if (window.ethereum && !DEV) {

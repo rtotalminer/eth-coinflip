@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { handleConnection } from "../utils/helpers";
-import { UserStore, syncStore } from "../data/store";
+import { UserStore, syncStore } from "../utils/store";
 import Header from "./Header/Header";
 import Coinflip from "./Coinflip/Coinflip";
 
@@ -18,8 +18,6 @@ import "../assets/img/spinning-coin4.png";
 
 const App = () => {
 
-    const userStore = syncStore(UserStore);
-
     window.ethereum.on('chainChanged', handleChainChanged);
     window.ethereum.on('accountsChanged', handleAccountsChanged);
 
@@ -33,7 +31,6 @@ const App = () => {
         window.location.reload();
     }
 
-
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -44,17 +41,22 @@ const App = () => {
         }
       
         init()
-          .catch(console.error);
-
-        setLoading(false);
+            .then(() => {
+                setLoading(false);
+            })
+            .catch(console.error);
       }, [])
+
+
   
     return (
         <div>
             <>
-              <Header />
-              <Coinflip />
-              {/* Add other components as needed */}
+                <Header loading={loading} />
+                {
+                    (!loading) ?
+                    <Coinflip /> : <></>
+                }
             </>
         </div>
     );

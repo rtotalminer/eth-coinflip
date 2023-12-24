@@ -29,9 +29,9 @@ export const networkConfigs : Record<number, INetworkConfig> = {
         fundAmount: "1000000000000000000",
         automationUpdateInterval: "30"
     },
-    5777: {
+    1337: {
         name: "ganache",
-        chainId: "5777",
+        chainId: "1337",
         fee: "100000000000000000",
         keyHash: "0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc",
         jobId: "29fa9aa13bf1468788b7cc4a500a45b8",

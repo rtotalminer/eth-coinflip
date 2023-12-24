@@ -1,7 +1,7 @@
 // src/components/Connect.tsx
 
 import { useEffect, useState } from "react";
-import { UserStore, syncStore } from "../../data/store";
+import { UserStore, syncStore } from "../../utils/store";
 import { handleConnection } from "../../utils/helpers";
 import { disconnect } from "process";
 

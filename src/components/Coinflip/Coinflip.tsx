@@ -1,14 +1,41 @@
-import { useState } from 'react';
-import CoinflipAnime from './CoinflipAnime'
-import './coinflip.css';
-import CoinAnimation from './CoinAnimation';
+import { useEffect, useState } from 'react';
+import { Contract, ethers } from 'ethers';
 
-//import goldcoinImg from '../assets/img/goldcoin.jpg';
+import { UserStore, syncStore } from '../../utils/store';
+import { COINFLIP_ADDR, COINFLIP_ABI } from '../../utils/config';
+
+import CoinAnimation from './CoinAnimation';
+import './coinflip.css';
+
 
 const Coinflip = () => {
-  var [amount, setAmount] = useState<string>('');
-  var [ isCoinAnime, setIsCoinAnime ] = useState(false)
-;
+    const [amount, setAmount] = useState<string>('');  
+    const [isAnimating, setIsAnimating] = useState(false);
+    let coinflipContract : any;
+    const userStore = syncStore(UserStore);
+
+    useEffect(() => {
+        // declare the data fetching function
+        const load = async () => {
+            let hasUserBet = false
+            if (userStore.accounts[0] != undefined) {
+                coinflipContract = new ethers.Contract(COINFLIP_ADDR.toString(), COINFLIP_ABI, userStore.signer);
+                hasUserBet = await coinflipContract.hasPlayerBet(userStore.accounts[0]);
+                console.log(coinflipContract);
+            }
+            return { hasUserBet };
+        }
+              
+        load()
+            .then((res) => {
+                setIsAnimating(res.hasUserBet);
+            })
+            .catch(console.error);
+
+
+    }, []);
+
+
   async function fireCoinflip(amount: string) {
     // Your coinflip logic here
     console.log(`Flipping coin with amount: ${amount}`);
@@ -17,7 +44,7 @@ const Coinflip = () => {
 
   return (
     <div className='coinflipContainer'>
-      <CoinAnimation  isCoinAnime={isCoinAnime} setIsCoinAnime={setIsCoinAnime}/>
+      <CoinAnimation  isAnimating={isAnimating} setIsAnimating={setIsAnimating}/>
       <div>
         <input
           type="text"
