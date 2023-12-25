@@ -69,4 +69,8 @@ export const VERIFICATION_BLOCK_CONFIRMATIONS = 6;
 export const BASE_FEE = "100000000000000000";
 export const GAS_PRICE_LINK = "1000000000"; // 0.000000001 LINK per gas
 
+export const loggerConfig = {
+    output: `${__dirname}/logs/debug_${Date.now()}.log`,
+}
+
 

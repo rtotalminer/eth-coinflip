@@ -5,7 +5,7 @@ require("dotenv").config()
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 
-import "./scripts/interact";
+import './scripts/interact';
 
 const config: HardhatUserConfig = {
     solidity: "0.8.20",

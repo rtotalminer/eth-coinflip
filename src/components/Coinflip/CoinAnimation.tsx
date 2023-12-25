@@ -37,11 +37,18 @@ const CoinAnimation: React.FunctionComponent<CoinflipProps> = ({
     <div
       className={(!isAnimating) ? 'cursor-pointer' : ''}
       onClick={() => { (!isAnimating) ? setFiredCoinflip(true) : {}}}>
+        {(!isAnimating) ? 
+          <img
+          src={`${IMG_FOLDER}/${coinImages[0]}.png`}
+          width={256}
+          height={256}
+        />:
+        
       <img
         src={`${IMG_FOLDER}/${coinImages[currentIndex]}.png`}
         width={256}
         height={256}
-      />
+      />}
     </div>
   );
 };

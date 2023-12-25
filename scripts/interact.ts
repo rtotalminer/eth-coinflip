@@ -1,91 +1,30 @@
+import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-
-const { task, types } = require("hardhat/config");
-
-// task("addConsumer", "Add a consumer to a VRFv2SubscriptionManager.")
-//   .addParam("addr1", "The VRFv2SubscriptionManager's contract address.")
-//   .addParam("addr2", "The Coinflip's contract address.")
-//   .addVariadicPositionalParam("constructorArgs", "The contract's constructor arguements.")
-//   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
-//     const VRFv2SubscriptionManager = new hre.ethers.Contract.attach(args.addr1);
-//     const Coinflip = new hre.ethers.Contract.attach(args.addr2);
-//     VRFv2SubscriptionManager.addConsumer(coinflip.target);
-//   });
-
-task("sendLink", "Send a given amount of LINK tokens to an address.")
-  .addParam("addr1", "The contract address.")
-  .addParam("value", "The amount of LINK.")
-  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
-  });
-
-task("topupSubscription", "Top up the funds for a VRFv2SubscriptionManager.")
-  .addParam("addr1", "The VRFv2SubscriptionManager's contract address.")
-  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
-  });
+import { BigNumberish, Contract } from "ethers";
+import { developmentChains } from "../utils/config";
 
 task("fulfillRandomWords", "Manually fulfill random words of a request.")
   .addParam("addr1", "The VRF Coordinator address.")
-  .addParam("addr2", "The VRF Coonsumer address.")
+  .addParam("addr2", "The VRF Consumer address.")
   .addParam("requestId", "The request ID to fulfill.")
   .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
     let VRFCoordinatorV2Mock = await hre.ethers.getContractAt("VRFCoordinatorV2Mock", args.addr1);
-    await VRFCoordinatorV2Mock.fulfillRandomWords(args.requestId, args.addr2);
+    console.log(BigInt(args.requestId));
+    await VRFCoordinatorV2Mock.fulfillRandomWords(BigInt(args.requestId), args.addr2);
   });
 
+task("topUpSubMang", "Manually fulfill top up a VRFv2Subscription Manager.")
+  .addParam("addr1", "The VRFv2SubscriptionManager address.")
+  .addParam("amount", "The amount too top up.")
+  .setAction(async (args: any, hre: HardhatRuntimeEnvironment) => {
+    let name = 'VRFv2SubscriptionManager';
+    if (developmentChains.includes(hre.network.name)) {
+      name = 'VRFv2SubscriptionManagerMock';
+    } 
+    let VRFv2SubscriptionManager = await hre.ethers.getContractAt(name, args.addr1);
+    await VRFv2SubscriptionManager.topUpSubscription(BigInt(args.amount));
+  });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-// const { deployContract, verifyContract, sendERC20, getABI } = require("../utils/helpers.js");
-// const { SEPOLIA_COORDINATOR, SEPOLIA_LINK_ADDR, SUBSC_MNGR_ADDR } = require("../config/config.js");
-
-// async function deploySubscriptionManager(funding, coordinatorAddr, linkAddr)
-// {
-//     // Create the Subscription Manager
-//     let VRFv2SubscriptionManager = await deployContract("VRFv2SubscriptionManager", [coordinatorAddr]);
-//     await VRFv2SubscriptionManager.deploymentTransaction().wait(funding);
-//     await verifyContract(VRFv2SubscriptionManager.target, [coordinatorAddr]);
-
-//     // Send LINK to it
-//     let linkAbi = await getABI(linkAddr);
-//     let paylinkTx = await sendERC20(
-//         linkAbi,
-//         VRFv2SubscriptionManager.target,
-//         `${funding}000000000000000000`
-//     );
-
-//     await paylinkTx.wait();
-//     console.log("Transaction indexed: ", paylinkTx.hash);    
-
-//     // Top up the Subscription Manager with the new LINK
-//     let topupTx = await VRFv2SubscriptionManager.topUpSubscription(hre.ethers.parseEther(`${funding}`));
-//     await topupTx.wait();
-//     console.log("Transaction indexed: ", topupTx.hash);  
-
-//     return VRFv2SubscriptionManager;
-// }
-
-// async function createCoinflip(VRFv2SubscriptionManager, coordinatorAddr)
-// {
-//     // Deploy and add the contract Coinflip as a consumer of the Subscription Manager.
-//     let subscriptionId = await VRFv2SubscriptionManager.s_subscriptionId();
-//     let coinflip = await deployContract("Coinflip", [subscriptionId, coordinatorAddr]);
-//     await coinflip.deploymentTransaction().wait(5);
-//     await verifyContract(coinflip.target, [subscriptionId, coordinatorAddr]);
-
-//     // Add it as a consumer of the Subscription Manager
-//     VRFv2SubscriptionManager.addConsumer(coinflip.target);
-
-//     return coinflip;
-// }
+// Contract: VRFCoordinatorV2Mock deployed to 0xEd005696F6329F31D1e4E3a4315091e11dfaB83D
+// Contract: VRFv2SubscriptionManagerMock deployed to 0x52d3085C04A116c3259F439c4942FA7aF16f946c
+// Contract: Coinflip deployed to 0x8Fc4cDB1609861efC9DC36A0515e036E90963E65

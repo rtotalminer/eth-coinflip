@@ -20,6 +20,8 @@ const Header: React.FunctionComponent<HeaderProps> = ({loading}: HeaderProps) =>
         <div className="header">
             <ul className='container'>
                 <li className="float-left logo">Lost Vegas</li>
+                <li className="float-left link">Games</li>
+                <li className="float-left link">Bank</li>
                 { (!loading) ? <li className="float-right link"><ConnectButton/></li> : <></> }
             </ul>
         </div>
