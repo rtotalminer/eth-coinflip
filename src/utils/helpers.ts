@@ -1,22 +1,42 @@
-import { JsonRpcApiProviderOptions, ethers } from "ethers";
-import { DEV, NETWORK } from "./config";
+import { JsonRpcApiProviderOptions, JsonRpcSigner, ethers } from "ethers";
+import { DEV, NETWORK, allowedNetworks } from "./config";
+import { developmentChains, networkConfigs } from "../../utils/config";
 
 export async function handleConnection() {
-    if (window.ethereum && !DEV) {
-        const provider = new ethers.BrowserProvider(window.ethereum)
-        const signer = await provider.getSigner();
-        const accounts = await signer.getAddress();
+    let _p = {}; let _a = {}; let _q : any[] = [];
+    if (window.ethereum.isMetaMask && !DEV) {
+        let signer: JsonRpcSigner | any = {};
+        let provider = new ethers.BrowserProvider(window.ethereum);
+        let accounts : any[] = await provider.listAccounts();
+
+        let network = await provider.getNetwork();
+        let chainId = Number(network.chainId);
+
+        console.log(accounts);
+
+        if (!allowedNetworks.includes(networkConfigs[chainId].name)) {
+            return { _p, _a, _q };
+        }
+
+        if (accounts.length > 0) {
+            signer = await provider.getSigner();
+            accounts = [await signer.getAddress()];
+        }
+        else {
+            console.log("Please unlock Metamask");
+        }
+
         return { provider, signer, accounts };
     }
-    else {
+    else if (DEV) {
         const provider = new ethers.JsonRpcProvider(`http://localhost:7545`);
         const signer = await provider.getSigner();
         const accounts = [await signer.getAddress()];
         return { provider, signer, accounts };
    
     }
+    return { _p, _a, _q };
 }
-
 
 
 

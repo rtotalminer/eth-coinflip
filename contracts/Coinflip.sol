@@ -21,6 +21,8 @@ contract Coinflip is VRFv2Consumer {
         uint256 payout;
     }
 
+    //needs antiwhale code and betrer payour calc
+
     mapping(address => bool) public hasPlayerBet;
     mapping(address => uint256) public playerIds;
     mapping(uint256 => Bet) public bets;
@@ -35,7 +37,7 @@ contract Coinflip is VRFv2Consumer {
 
     function calculatePayout(uint256 value) pure internal returns (uint256)
     {
-        return value / 2;
+        return value * 2;
     }
 
     function flip(CoinDecision _bet) public payable returns (uint256 requestId)

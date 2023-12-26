@@ -23,12 +23,15 @@ import { IMG_FOLDER } from "../utils/config";
 
 const App = () => {
 
-    window.ethereum.on('chainChanged', handleChainChanged);
-    window.ethereum.on('accountsChanged', handleAccountsChanged);
+    if (window.ethereum != undefined) {
+        window.ethereum.on('chainChanged', handleChainChanged);
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+    }
 
     async function handleAccountsChanged(_accounts: string[]) {
         const { provider, signer, accounts } = await handleConnection();
         UserStore.setState({accounts: accounts, signer: signer, provider: provider});
+        
         window.location.reload();
     }
 
@@ -36,17 +39,20 @@ const App = () => {
         window.location.reload();
     }
 
-    const [loading, setLoading] = useState(true);
-    const [isConnected, setIsConnected] = useState(false)
-
     const userStore = syncStore(UserStore);
+
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         // declare the data fetching function
         const init = async () => {
-            const { provider, signer, accounts } = await handleConnection();
-            UserStore.setState({accounts: accounts, signer: signer, provider: provider});
-            if (accounts[0] != undefined) {  setIsConnected(true)  }
+            //console.log(userStore)
+            if (localStorage.getItem("isConnected") == 'true') {
+                const { provider, signer, accounts } = await handleConnection();
+                UserStore.setState({accounts: accounts, provider: provider, signer: signer});
+                console.log(provider);
+            }
         }
       
         init()
@@ -63,10 +69,10 @@ const App = () => {
             <Header loading={loading} />
             {
                 (!loading) ?
-                    (userStore.accounts[0] != undefined) ?
+                    ((userStore.accounts != undefined) ? userStore.accounts.length > 0 : false) ?
                         <Coinflip /> :
                         <div className="centre">
-                            <span className="centre color-red">You're not connected.</span>
+                            <span className="centre color-red">Please connect using metamask.</span>
                         </div>
                 : <></>
             }

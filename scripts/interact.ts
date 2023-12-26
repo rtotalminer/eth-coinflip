@@ -25,6 +25,8 @@ task("topUpSubMang", "Manually fulfill top up a VRFv2Subscription Manager.")
     await VRFv2SubscriptionManager.topUpSubscription(BigInt(args.amount));
   });
 
+
+
 // Contract: VRFCoordinatorV2Mock deployed to 0xEd005696F6329F31D1e4E3a4315091e11dfaB83D
 // Contract: VRFv2SubscriptionManagerMock deployed to 0x52d3085C04A116c3259F439c4942FA7aF16f946c
 // Contract: Coinflip deployed to 0x8Fc4cDB1609861efC9DC36A0515e036E90963E65
