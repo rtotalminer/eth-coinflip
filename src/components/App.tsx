@@ -1,83 +1,68 @@
 import { useEffect, useState } from "react";
 import { handleConnection } from "../utils/helpers";
-import { UserStore, syncStore } from "../utils/store";
+import { ISystemStoreState, IUserStoreState, SystemStore, UserStore, defaultSystemStore, defaultUserStore, syncStore } from "../shared/store";
 import Header from "./Header/Header";
 import Coinflip from "./Coinflip/Coinflip";
 
-import "../assets/img/goldcoin.png";
-import "../assets/img/spritesheet.png";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import "../assets/img/goldcoinv2_0.png";
 import "../assets/img/goldcoinv2_1.png";
 import "../assets/img/goldcoinv2_2.png";
 
-import "../assets/img/spinning-coin.png";
-import "../assets/img/spinning-coin2.png";
-import "../assets/img/spinning-coin3.png";
-import "../assets/img/spinning-coin4.png";
+import './app.css';
 
-import "../assets/img/error.gif"
+import { getUserStoreState, handleAccountsChanged, handleChainChanged, testyMctest } from "../service/user";
+import { LOCAL_STORAGE } from "../shared/config";
+import Chips from "./Bank/Chips";
 
-import './App.css';
-import { IMG_FOLDER } from "../utils/config";
+export default function App() {
 
-const App = () => {
-
-    if (window.ethereum != undefined) {
+    if (window?.ethereum != undefined) {
         window.ethereum.on('chainChanged', handleChainChanged);
         window.ethereum.on('accountsChanged', handleAccountsChanged);
     }
 
-    async function handleAccountsChanged(_accounts: string[]) {
-        const { provider, signer, accounts } = await handleConnection();
-        UserStore.setState({accounts: accounts, signer: signer, provider: provider});
-        
-        window.location.reload();
-    }
-
-    function handleChainChanged(chainId : number) {
-        window.location.reload();
-    }
-
-    const userStore = syncStore(UserStore);
-
-    const [loading, setLoading] = useState(true);
-
+    const systemStore = syncStore(SystemStore);
 
     useEffect(() => {
-        // declare the data fetching function
-        const init = async () => {
-            //console.log(userStore)
-            if (localStorage.getItem("isConnected") == 'true') {
-                const { provider, signer, accounts } = await handleConnection();
-                UserStore.setState({accounts: accounts, provider: provider, signer: signer});
-                console.log(provider);
+        if (!systemStore.loading)  return;
+        const load = async () => {
+            let userStoreState: IUserStoreState = defaultUserStore;
+            let systemStoreState: ISystemStoreState = defaultSystemStore;
+
+            if (localStorage.getItem(LOCAL_STORAGE.CONNECTION) == `${true}`) {
+                userStoreState = await getUserStoreState();
+                console.log(userStoreState);
             }
+            if (localStorage.getItem(LOCAL_STORAGE.DARK_MODE) == `${true}`) {
+                systemStoreState.darkMode = true;
+            }
+
+            systemStoreState.loading = false;
+            return {systemStoreState, userStoreState};
         }
-      
-        init()
-            .then(() => {
-                setLoading(false);
+        load().then((res) => {
+                SystemStore.setState(res.systemStoreState);
+                UserStore.setState(res.userStoreState);
             })
             .catch(console.error);
-      }, []);
+    }, [systemStore.loading])
 
-
+      const homeComponent = <>
+        <div className="centre container">
+            Welcome to DeVegas, a decetralised autonamous casino ran by governance chips.
+        </div>
+      </>
   
     return (
-        <div>
-            <Header loading={loading} />
-            {
-                (!loading) ?
-                    ((userStore.accounts != undefined) ? userStore.accounts.length > 0 : false) ?
-                        <Coinflip /> :
-                        <div className="centre">
-                            <span className="centre color-red">Please connect using metamask.</span>
-                        </div>
-                : <></>
-            }
-        </div>
+        <Router basename="/">
+            <Header />
+            <Routes>
+                <Route path="/" element={homeComponent}/>
+                <Route path="/chips" element={<Chips/>} />
+                <Route path="/coinflip" element={<Coinflip/>} />
+            </Routes>
+        </Router>
     );
 };
-
-export default App;

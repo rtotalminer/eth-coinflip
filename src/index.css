@@ -4,6 +4,6 @@ body {
   color: white;
 }
 
-*, button, input {
+*, button, input, h1, h2 {
   font-family: 'DM Mono', monospace;
 }

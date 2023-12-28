@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import { Contract, ethers, formatEther, parseEther } from 'ethers';
 
-import { UserStore, syncStore } from '../../utils/store';
+import { UserStore, syncStore } from '../../shared/store';
 import { COINFLIP_ADDR, COINFLIP_ABI, DEV } from '../../utils/config';
 
 import CoinAnimation from './CoinAnimation';
 import './coinflip.css';
 
 import _COINFLIP_ABI from '../../../artifacts/contracts/Coinflip.sol/Coinflip.json'
-import { NorthWest, SignLanguageRounded } from '@mui/icons-material';
+import { CheckBoxOutlineBlank, NorthWest, SignLanguageRounded } from '@mui/icons-material';
 
 
 const Coinflip = () => {
@@ -21,6 +21,8 @@ const Coinflip = () => {
         AWAITING,
         ERROR
     }
+
+    const loading = false;
 
     const [amount, setAmount] = useState<string>('0');  
     const [isAnimating, setIsAnimating] = useState(false);
@@ -38,9 +40,6 @@ const Coinflip = () => {
         // reset the animation
         setIsAnimating(false);
         setRequestId(0);
-
-        let debts = await coinflipContract.debts(userStore.accounts[0]);
-        setDebts(formatEther(debts));
 
         // display yyay you won (so what if user refreshes have a prev rersults later)
         console.log(_recentBet);
@@ -62,12 +61,13 @@ const Coinflip = () => {
     async function getRequestId() {
         let coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
         let _requestId = (await coinflipContract.playerIds(userStore.accounts[0]));
+        console.log(_requestId);
         return _requestId;
     }
 
     async function fireCoinflip() {
         let coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
-        let tx = await coinflipContract.flip(0, {value: parseEther(amount)});
+        let tx = await coinflipContract.flip(0, parseEther(amount));
         let receipt = await tx.wait();
         const _requestId = await getRequestId();
         return _requestId;
@@ -105,18 +105,23 @@ const Coinflip = () => {
     }
 
     useEffect(() => {
+        console.log(loading);
+        if (loading)  return;
         const result = async () => {
             let _requestId = await getRequestId();
             setRequestId(_requestId);
             return { _requestId };
         }
         result().then((res) => {
-            getDebts();
             setIsLoading(false);
         }).catch(console.error);
     }, []);
 
     useEffect(() => {
+    }, [loading]);
+
+    useEffect(() => {
+        console.log(requestId);
         if (requestId == -1 )  return;
         if (requestId != 0 )  return;
         
@@ -133,8 +138,12 @@ const Coinflip = () => {
 
     useEffect(() => {
         if (requestId == 0 )  return;
-        if (requestId == -1 )  return;
+        if (requestId == -1 ) {
+            setRequestId(0);
+            return;
+        }
 
+        
         setIsAnimating(true);
         setResulsMsg(ResultsMsgEnum.AWAITING);
 
@@ -142,11 +151,14 @@ const Coinflip = () => {
             await waitFulfillment(requestId);
         }
         result().then((res) => {
-            getDebts();
-        }).catch(console.error);
+
+        }).catch((err) => {
+            console.log(err);
+            setResulsMsg(ResultsMsgEnum.ERROR);
+        });
     }, [requestId]);
 
-    const errorMsg = <></>;
+    const errorMsg = <>An error has occured.</>;
     const awaitingMsg = <>
         <span>Coin has been flipped, view the transaction <a>here</a></span>
     </>;
@@ -154,14 +166,18 @@ const Coinflip = () => {
         
     </>;
 
+    async function onCashOut() {
+    }
+
     
 
   return (
     <>
-        {(!isLoading) ?
-        <div className='coinflipContainer'>
-            <div className='debts'>
-                Winnings: {debts}
+        {(!loading) ?
+        <div className='centre text-align-centre padding-top-s'>
+            <div className=''>
+                <div className='font-large'>Coinflip</div>
+                <div className='padding-top-s'>Heads is on the house, place your bet and click the coin to play.</div>
             </div>
             <CoinAnimation 
                 isAnimating={isAnimating}

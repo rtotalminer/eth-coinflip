@@ -3,8 +3,33 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 60vh;
 }
+
 .color-red {
   color: red;
+}
+
+.container {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  padding-left: 3em;
+  padding-right: 3em;
+}
+
+
+.text-align-centre {
+  text-align: center;
+}
+
+.font-large {
+  font-size: 32px;
+}
+
+.padding-top-s {
+  padding-top: 10px;
+}
+
+.padding-top-m {
+  padding-top: 25px;
 }

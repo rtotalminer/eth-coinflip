@@ -1,28 +1,48 @@
 // src/components/Connect.tsx
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import ConnectButton from "./ConnectButton";
 
 import './header.css';
+import { Link } from "react-router-dom";
+import { SystemStore, syncStore } from "../../shared/store";
 
-interface HeaderProps {
-    loading: boolean;
-  }
+import { ChipsInfo } from "./ChipsInfo";
+import ConnectButton from "./ConnectButton";
+
   
-const Header: React.FunctionComponent<HeaderProps> = ({loading}: HeaderProps) => {
+const Header = () => {
 
-    useEffect(() => {
-        
-    }, []);
+    const systemStore = syncStore(SystemStore);
 
+    const loadedElement =  <>
+        <ConnectButton/>
+        <ChipsInfo/>
+    </>
+    
     return (
-        <div className="header">
+        <div>
             <ul className='container'>
-                <li className="float-left logo">Lost Vegas</li>
-                <li className="float-left link">Games</li>
-                <li className="float-left link">Bank</li>
-                { (!loading) ? <li className="float-right link"><ConnectButton/></li> : <></> }
+                <li className="float-left logo"><Link to='/'>!-- DeVeGas --!</Link></li>
+                <div className="dropdown float-left link">
+                    <button className="dropbtn">Games 
+                        <i className="fa fa-caret-down"></i>
+                    </button>
+                    <div className="dropdown-content">
+                        <a href="#">Slots</a>
+                        <Link to="/coinflip">Coinflip</Link>
+                    </div>
+                </div>
+                <div className="dropdown float-left link">
+                    <button className="dropbtn">Bank 
+                        <i className="fa fa-caret-down"></i>
+                    </button>
+                    <div className="dropdown-content">
+                        <Link to="/chips">Chips</Link>
+                        <a href="#">Vault</a>
+                    </div>
+                </div>
+                {(systemStore.loading) ? <></> : (loadedElement)}
             </ul>
         </div>
     );

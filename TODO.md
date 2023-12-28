@@ -1,5 +1,0 @@
- - *done* Connection to Web3 across app to be dynamically updated
- - Finish and clean up the tests
- - Create generic script that deploys Coinflip (useful in testing + production) 
- - Refactor code + docs
- - v1 should be simiple enough to work on all blockchains n dev envs

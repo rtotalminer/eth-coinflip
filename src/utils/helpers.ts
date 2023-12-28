@@ -65,8 +65,6 @@ export async function handleConnection() {
 
 
 
-
-
 // import { ethers } from "ethers";
 // import axios from "axios";
 

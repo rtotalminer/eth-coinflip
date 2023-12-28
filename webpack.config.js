@@ -18,7 +18,8 @@ module.exports = {
   devServer: {
     static: path.join(__dirname, "dist"),
     port: 9000,
-    compress: true
+    compress: true,
+    historyApiFallback: true
   },
   module: {
     rules: [
@@ -38,16 +39,16 @@ module.exports = {
         ],
       },
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|tsx)$/,
         use: 'ts-loader',
-        exclude: /node_modules/,
+        exclude: [/node_modules/, path.resolve('..', __dirname, 'tests', '**', '*.spec.ts')],
       },
       {
         test: /\.(js|jsx)$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/, path.resolve(__dirname, 'tests')],
         use: {
           loader: "babel-loader",
-          options:{
+          options: {
             presets: ["@babel/preset-env", "@babel/preset-react"],
           }
         }
