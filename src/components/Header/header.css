@@ -1,4 +1,33 @@
 
+
+.navbar {
+  display: flex;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .float-right {
   float: right;
 }
@@ -19,6 +48,11 @@ li {
   cursor: pointer;
 }
 
+.padding-10px {
+  padding: 10px;
+}
+
+
 .link:hover {
   background-color: #C5BAAF;
   cursor: pointer;
@@ -27,6 +61,13 @@ li {
 
 .logo {
   color: #ffef00;
+  font-size: 32px;
+  padding-right: 10px;
+  
+}
+
+.padding-right {
+  padding-right: 50px;
 }
 
 .logo {
@@ -44,8 +85,6 @@ li {
     -webkit-filter: hue-rotate(-360deg);
   }
 }
-
-
 
 
 
@@ -82,7 +121,6 @@ li {
 }
 
 .dropdown .dropbtn {
-  font-size: 16px;  
   border: none;
   outline: none;
   color: white;
@@ -91,6 +129,8 @@ li {
   font-family: inherit;
   margin: 0;
 }
+
+
 
 .float-right {
   float: right

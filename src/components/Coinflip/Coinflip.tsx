@@ -176,8 +176,12 @@ const Coinflip = () => {
         {(!loading) ?
         <div className='centre text-align-centre padding-top-s'>
             <div className=''>
-                <div className='font-large'>Coinflip</div>
-                <div className='padding-top-s'>Heads is on the house, place your bet and click the coin to play.</div>
+                <div style={{fontSize: '36px', textAlign: 'center'}}>
+                    Coinflip
+                </div>
+                <div  style={{padding: '10px 0px 10px 0px'}}>
+                    Heads is on the house, place your bet and click the coin to play.
+                </div>
             </div>
             <CoinAnimation 
                 isAnimating={isAnimating}

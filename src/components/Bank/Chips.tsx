@@ -2,10 +2,16 @@
 import { useEffect, useState } from "react";
 
 import './chips.css';
-import { BANK_ABI, BANK_ADDR, CHIPS_ABI } from "../../utils/config";
+import { BANK_ABI, BANK_ADDR, CHIPS_ABI, IMG_FOLDER } from "../../utils/config";
 import { ethers, formatEther, parseEther } from "ethers";
 import { UserStore, syncStore } from "../../shared/store";
 import { ContentPasteOffSharp } from "@mui/icons-material";
+
+function ExchangeForm() {
+    return (
+        <></>
+    )
+}
 
   
 const Chips = () => {
@@ -21,13 +27,14 @@ const Chips = () => {
     const [chipsTokenAddress, setChipsTokenAddress] = useState('');
 
     useEffect(() => {
-        if (loading)  return;
         const load = async () => {
-            await getChipsBalance();
+            let bankContract = new ethers.Contract(BANK_ADDR, BANK_ABI, userStore.signer);
+            let chipsTokenAddr = await bankContract.CHIPS_TOKEN();
+            setChipsTokenAddress(chipsTokenAddr);
         }
         load().then(() => {
         }).catch(() => {});
-    }, [loading]);
+    }, []);
 
     const [assetFrom, SetAssetFrom] = useState('ether');
     const [assetTo, setAssetTo] = useState('chips');
@@ -53,6 +60,7 @@ const Chips = () => {
     async function getChipsBalance() {
         let bankContract = new ethers.Contract(BANK_ADDR, BANK_ABI, userStore.signer);
         let chipsTokenAddr = await bankContract.CHIPS_TOKEN();
+        setChipsTokenAddress(chipsTokenAddr);
         let chipsToken = new ethers.Contract(chipsTokenAddr, CHIPS_ABI, userStore.signer);
         let bal = await chipsToken.balanceOf(userStore.accounts[0]);
         console.log(`Balance of ${userStore.accounts[0]} is ${formatEther(bal.toString())}`)
@@ -101,25 +109,42 @@ const Chips = () => {
 
     return (
         <>
-            <div className='centre text-align-centre padding-top-s'>
+            <div style={{
+                    textAlign: 'center',
+                    outline: 'groove',
+                    width: '400px',
+                    margin: 'auto',
+                    padding: '20px'
+                }}>
                 <div className=''>
-                    <div className='font-large'>Chips</div>
-                    <div>{chipsTokenAddress}</div>
-                    <div className='padding-top-s'>Exchange chips with the bank.</div>
+                    <div style={{fontSize: '36px'}}>DeVegas Chips</div>
+                    <div className='padding-top-s'>Exchange DeVegas Chips or Ethereum with the bank.</div>
                 </div>
                 {chips}
                 <div>
-                    <div>
-                        <label>{assetFrom}</label>
-                        <input type="number" value={asset1Value} onChange={handleAsset1Change} />
+                    <div style={{paddingTop: '10px'}}>
+                        <input
+                            style={{width: '350px', height: '50px'}}
+                            type="number"
+                            value={asset1Value}
+                            onChange={handleAsset1Change}
+                        />
                     </div>
                     <div>
-                        <label>{assetTo}</label>
-                        <input type="number" value={asset2Value} onChange={handleAsset2Change} />
+                        <i onClick={handleSwapAssets} style={{cursor: 'pointer', fontSize: '28px'}} className="fa fa-exchange" aria-hidden="true"></i>
                     </div>
                     <div>
-                        <button onClick={handleSwapAssets}>S</button>
-                        <button onClick={handleExchange}>Exchange</button>
+                        <input
+                            style={{width: '350px', height: '50px'}}
+                            type="number"
+                            value={asset2Value}
+                            onChange={handleAsset2Change}
+                        />
+                    </div>
+                    <div style={{paddingTop: '10px'}}>
+                        <p>There is a 10% tax on all exchange transactions. To find out more please follow this <a>link.</a></p>
+                        <p>1 CHIP = 0.01 ETH</p>
+                        <button onClick={handleExchange}>Exchange/Mint</button>
                     </div>
                 </div>
             </div>

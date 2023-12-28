@@ -10,9 +10,14 @@ import "../assets/img/goldcoinv2_0.png";
 import "../assets/img/goldcoinv2_1.png";
 import "../assets/img/goldcoinv2_2.png";
 
+import "../assets/img/gold_pile.png";
+
+
+import "../assets/img/pixil-frame-0.png";
+
 import './app.css';
 
-import { getUserStoreState, handleAccountsChanged, handleChainChanged, testyMctest } from "../service/user";
+import { getUserStoreState, handleAccountsChanged, handleChainChanged } from "../service/user";
 import { LOCAL_STORAGE } from "../shared/config";
 import Chips from "./Bank/Chips";
 

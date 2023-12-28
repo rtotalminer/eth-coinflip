@@ -2,11 +2,18 @@
 // f(x): get the provider and set it to the store...
 
 import { BrowserProvider, JsonRpcSigner, ethers } from "ethers";
-import { IUser, IUserStoreState } from "../shared/store";
+import { IUser, IUserStoreState, UserStore, defaultUserStore } from "../shared/store";
 import { ALLOWED_NETWORKS } from "../shared/config";
+import { BANK_ABI, BANK_ADDR, CHIPS_ABI } from "../utils/config";
+import { ConstructionOutlined } from "@mui/icons-material";
 
-export async function getUserChipsBalance(address: string) : Promise<string> {
-    return '0';
+export async function getUserChipsBalance(of: string, signer: any) : Promise<string> {
+    let bankContract = new ethers.Contract(BANK_ADDR, BANK_ABI, signer);
+    let chipsTokenAddr = await bankContract.CHIPS_TOKEN();
+    let chipsToken = new ethers.Contract(chipsTokenAddr, CHIPS_ABI, signer);
+    let bal = await chipsToken.balanceOf(of);
+    console.log(bal);
+    return bal;
 }
 
 // Tries to connect to a user and return a store.
@@ -26,14 +33,23 @@ export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: 
             return userStoreState;
         }
         signer = await provider.getSigner();
-        user = {address: await signer.getAddress(), chips: await getUserChipsBalance(user.address)};
+        let address = await signer.getAddress()
+        let chips = await getUserChipsBalance(address, signer);
+        user = {address: address, chips: chips};
         return {user: user, connected: true, provider: provider, signer: signer};
     }
     return userStoreState;
 }
 
-export async function testyMctest() : Promise<object> {
-    return {please: 'work'};
+export async function connectWallet() {
+    const userStoreState = await getUserStoreState();
+    UserStore.setState(userStoreState);
+    localStorage.setItem("isConnected", userStoreState.connected.toString());
+}
+
+export async function disconnectWallet() {
+    UserStore.setState(defaultUserStore);
+    localStorage.setItem("isConnected", 'false');
 }
 
 export async function handleAccountsChanged(_accounts: string[], ) {
