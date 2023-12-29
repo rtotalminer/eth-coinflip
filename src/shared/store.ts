@@ -92,11 +92,13 @@ export const UserStore = Store(defaultUserStore);
 export interface ISystemStoreState {
     loading: boolean;
     darkMode: boolean;
+    connectionErrMsg: string;
 }
 
 export const defaultSystemStore : ISystemStoreState = {
     loading: true,
     darkMode: false,
+    connectionErrMsg: 'Unable to connect to a provier or signer.',
 }
 
 export const SystemStore = Store(defaultSystemStore);

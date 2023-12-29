@@ -1,7 +1,7 @@
 // CoinAnimation.jsx
 
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { IMG_FOLDER } from '../../shared/config';
+import { IMG_FOLDER } from '../../../shared/config';
 
 import './coinflip.css';
 

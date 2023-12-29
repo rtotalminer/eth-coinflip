@@ -1,11 +1,13 @@
 
 // f(x): get the provider and set it to the store...
 
-import { BrowserProvider, Contract, JsonRpcSigner, ethers } from "ethers";
+import { BrowserProvider, Contract, JsonRpcProvider, JsonRpcSigner, ethers } from "ethers";
+
 import { IContracts, IUser, IUserStoreState, UserStore, defaultUserStore } from "../shared/store";
-import { ALLOWED_NETWORKS, COINFLIP_ADDR } from "../shared/config";
+
+import { ALLOWED_NETWORKS, COINFLIP_ADDR, DEV, GANACHE_URL } from "../shared/config";
 import { BANK_ABI, BANK_ADDR, CHIPS_ABI, COINFLIP_ABI } from "../shared/config";
-import { ConstructionOutlined } from "@mui/icons-material";
+
 
 export async function getUserChipsBalance(of: string, signer: any) : Promise<string> {
     let bankContract = new ethers.Contract(BANK_ADDR, BANK_ABI, signer);
@@ -20,37 +22,38 @@ export async function getUserChipsBalance(of: string, signer: any) : Promise<str
 export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: Return an IError
     let user : IUser = { address: '', chips: '' }
     let signer: JsonRpcSigner | any = {};
-    let provider : BrowserProvider;
+    let provider : BrowserProvider | JsonRpcProvider;
     let contracts : IContracts = {};
-    let userStoreState : IUserStoreState = {
-        user: user,
-        connected: false,
-        provider: {},
-        signer: signer,
-        contracts: contracts
-    };
     
-    if (window?.ethereum.isMetaMask || window?.ethereum.isConnected()) {
+    if (window?.ethereum?.isMetaMask || window?.ethereum?.isConnected()) {
         if ((await window.ethereum._metamask.isUnlocked()) == false) {
-            return userStoreState;
+            return defaultUserStore;
         }
         provider = new ethers.BrowserProvider(window.ethereum);
         let network = await provider.getNetwork();
         if ((!ALLOWED_NETWORKS.includes(network.name))) {
-            return userStoreState;
+            return defaultUserStore;
         }
-        signer = await provider.getSigner();
-        let address = await signer.getAddress()
-        let chips = await getUserChipsBalance(address, signer);
-        user = {address: address, chips: chips};
-
-        contracts.Coinflip = new Contract(COINFLIP_ADDR, COINFLIP_ABI, signer);
-        contracts.Bank = new Contract(BANK_ADDR, BANK_ABI, signer);
-        contracts.Chips = new Contract(await contracts.Bank.CHIPS_TOKEN(), CHIPS_ABI, signer);
-
-        return {user: user, connected: true, provider: provider, signer: signer, contracts: contracts};
     }
-    return userStoreState;
+
+    else if ( (!window?.ethereum || window?.ethereum == undefined) && DEV) {
+        provider = new JsonRpcProvider(GANACHE_URL);
+    }
+
+    else {
+        return defaultUserStore;
+    }
+
+    signer = await provider.getSigner();
+    let address = await signer.getAddress()
+    let chips = await getUserChipsBalance(address, signer);
+    user = {address: address, chips: chips};
+
+    contracts.Coinflip = new Contract(COINFLIP_ADDR, COINFLIP_ABI, signer);
+    contracts.Bank = new Contract(BANK_ADDR, BANK_ABI, signer);
+    contracts.Chips = new Contract(await contracts.Bank.CHIPS_TOKEN(), CHIPS_ABI, signer);
+
+    return {user: user, connected: true, provider: provider, signer: signer, contracts: contracts};
 }
 
 export async function connectWallet() {

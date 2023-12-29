@@ -9,12 +9,13 @@ export default function Footer() {
       height: '50px',
       backgroundColor: '#282829',
       color: 'white',
-      textAlign: 'center'
+      textAlign: 'center',
+      paddingTop: '15px'
   }
 
   return (
   <div style={footer}>
-    <p><a>Discord</a> | <a>Twitter</a></p>
+    <p><a href='#discord'>Discord</a> | <a href='#twitter'>Twitter</a></p>
   </div>
 )
 }

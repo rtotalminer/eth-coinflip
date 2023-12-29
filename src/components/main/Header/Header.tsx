@@ -5,28 +5,28 @@ import { useEffect, useRef, useState } from "react";
 
 import './header.css';
 import { Link } from "react-router-dom";
-import { SystemStore, UserStore, syncStore } from "../../shared/store";
+import { SystemStore, UserStore, syncStore } from "../../../shared/store";
 
-import { connectWallet, disconnectWallet } from "../../service/user";
-import { BANK_ABI, BANK_ADDR, BASE_URL, CHIPS_ABI, IMG_FOLDER } from "../../shared/config";
+import { connectWallet, disconnectWallet } from "../../../services/user";
+import { BANK_ABI, BANK_ADDR, BASE_URL, CHIPS_ABI, IMG_FOLDER } from "../../../shared/config";
 import { ethers, formatEther } from "ethers";
 
 const gameLinks = [
-    {title: 'Coinflip (new)', link: '/coinflip'},
+    {title: 'Coinflip (new) 🟡', link: '/coinflip'},
     {title: 'Slots - Coming Soon!', link: '/slots'},
     {title: 'Blackjack - Coming Soon!', link: '/blackjack'},
 ]
 
 const bankLinks = [
-    {title: `Cashier's Cage`, link: '/chips'},
-    {title: `The Vault`, link: '/vault'}
+    {title: `Cashier's Cage 💰`, link: '/chips'},
+    {title: `The Vault 🏦`, link: '/vault'}
 ]
 
 export function DropdownNavButton(props: any) {
     return (
         <div className="dropdown link">
-            <div className="dropbtn">{props.title}
-                <i className="fa fa-caret-down"></i>
+            <div className="dropbtn" style={{fontSize: '18px'}}>{props.title}
+                <i style={{paddingLeft: '10px'}} className="fa fa-caret-down"></i>
             </div>
             <div className="dropdown-content">
                 {props.links.map((link: any, i: any) => (
@@ -67,7 +67,7 @@ function ConnectButton() {
 
     const connectButton = <>
         <div className='float-right' onClick={() => {connectWallet()}}>
-            <span className='llink link'>Connect</span>
+            <span className='llink link' style={{fontSize: '18px'}}>Connect</span>
         </div> 
     </>
 
@@ -83,7 +83,7 @@ function ConnectButton() {
 
     const showAccount = 
         <div className="dropdown link">
-            <div className="dropbtn">
+            <div className="dropbtn" style={{fontSize: '18px'}}>
                 {accountInfo}
                 <i className="fa fa-caret-down"></i>
             </div>
@@ -110,7 +110,7 @@ export default function Header() {
     return (
         <div id='header' className="container">
             <div id='navbar' className='align-items-center float-left display-flex padding-10px'>
-                <Link to='/' className='logo link'>
+                <Link to='/' className='logo link' style={{paddingRight: '30px'}}>
                     Lost Vegas
                 </Link>
                 <DropdownNavButton title='Games' links={gameLinks}/>

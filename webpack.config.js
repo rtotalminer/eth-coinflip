@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+//const RemarkHTML = require('remark-html');
 
 module.exports = {
   mode: 'development',
@@ -52,6 +53,20 @@ module.exports = {
             presets: ["@babel/preset-env", "@babel/preset-react"],
           }
         }
+      },
+      {
+        test: /\.md$/,
+        use: [
+          {
+            loader: "html-loader",
+          },
+          {
+            loader: "remark-loader",
+            options: {
+              
+            },
+          },
+        ],
       },
     ],
   },

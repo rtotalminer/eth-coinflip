@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Contract, ethers, formatEther, parseEther } from 'ethers';
 
-import { SystemStore, UserStore, syncStore } from '../../shared/store';
-import { COINFLIP_ADDR, COINFLIP_ABI, DEV } from '../../shared/config';
+import { SystemStore, UserStore, syncStore } from '../../../shared/store';
+import { COINFLIP_ADDR, COINFLIP_ABI, DEV } from '../../../shared/config';
 
 import CoinAnimation from './CoinAnimation';
 import './coinflip.css';
 
-import _COINFLIP_ABI from '../../../artifacts/contracts/Coinflip.sol/Coinflip.json'
+import _COINFLIP_ABI from '../../../../artifacts/contracts/Coinflip.sol/Coinflip.json'
 
 const Coinflip = () => {
 

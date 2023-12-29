@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { SystemStore, UserStore, syncStore } from "../../../shared/store";
-import { formatEther, parseEther, parseUnits } from "ethers";
+import { BigNumberish, formatEther, parseEther, parseUnits } from "ethers";
 import { BANK_ADDR } from "../../../shared/config";
-import { parse } from "path";
+import { Link } from "react-router-dom";
+import { formatNaN } from "../../../services/helpers";
 
 export default function Vault() {
  
@@ -16,24 +17,30 @@ export default function Vault() {
   const [withdrawBalance, setWithdrawBalance] = useState('0');
 
     useEffect(() => {
-        if (!userStore.connected)  return;
+        if (!userStore.connected && !userStore.provider)  return;
         const load = async () => {
-            getBankBalance();
-            getStake();
-            getInvestorsBalance();
-            getPoolAPY();
-            getWithdrawBalance();
+          console.log(userStore)
+            if (userStore.signer) {
+              await getStake();
+              await getWithdrawBalance();
+            }
+            await getBankBalance();
+            await getInvestorsBalance();
+            await getPoolAPY();
         } 
-        load().then().catch((err) => {console.log(err)});
+        const subToData = async () => {
+          // TODO: remember to unsubscribe from this event?
+          let bankBalanceEvent = await userStore.contracts.Bank.on("BankBalanceUpdated", (bankBalanace: any) => {
+            load();
+          }); 
+        }
+        load().then(() => {subToData()}).catch((err) => {console.log(err)});
   }, [userStore.connected]);
 
   async function addStake() {
     let tx = await userStore.contracts.Bank.addStake({value: parseEther('1.0')});
     await tx.wait();
   }
-  
-  // move all provider read calls to an exterenal proovider i. infura,
-  // so user can view withotut beinig connected to web3
 
   async function withdrawStake() {
     if (!userStore.connected)  return;
@@ -42,8 +49,9 @@ export default function Vault() {
   }
 
   async function getBankBalance() {
-    const _bankBalance = await userStore.provider.getBalance(BANK_ADDR);            
-    setBankBalance(formatEther(_bankBalance.toString()).toString());
+    console.log(userStore.provider)
+    const _bankBalance = await userStore.provider.getBalance(BANK_ADDR);  
+    setBankBalance(formatEther(_bankBalance.toString()).toString());      
   }
 
   async function getStake() {
@@ -60,19 +68,21 @@ export default function Vault() {
   async function getPoolAPY() {
     let _totalInvestorStake = await userStore.contracts.Bank.totalInvestorStake();
     let _poolEarnings = await userStore.contracts.Bank.poolEarnings();
-    let _poolAPY = Number(_poolEarnings)/Number(_totalInvestorStake);
-    setPoolAPY((100*Number(_poolAPY)).toString());
+    let poolAPYRaw = Number(_poolEarnings)/Number(_totalInvestorStake);
+    let poolAPYFormat = 100*formatNaN(poolAPYRaw);
+    setPoolAPY(poolAPYFormat.toString());
   }
 
   async function getWithdrawBalance() {
+    if (!userStore.connected)  return;
     let _totalInvestorStake = await userStore.contracts.Bank.totalInvestorStake();
     let _stakeAmount = await userStore.contracts.Bank.investorsStake(userStore.user.address);
     let _poolEarnings = await userStore.contracts.Bank.poolEarnings();
-    let _poolAPY = Number(_poolEarnings)/Number(_totalInvestorStake);
-    let _withdrawBalance = (1 + Number(_poolAPY)) * Number(_stakeAmount);
-    let withdrawBalance__ = formatEther(_withdrawBalance.toString()).toString()
-    let withdrawBalance_ = withdrawBalance__.slice(0, 6);
-    setWithdrawBalance(withdrawBalance_);
+    let poolAPYRaw = Number(_poolEarnings)/Number(_totalInvestorStake);
+    let withdrawBalanceRaw = (1 + Number(poolAPYRaw)) * Number(_stakeAmount);
+    let withdrawBalanceFormat =  formatEther(formatNaN(withdrawBalanceRaw).toString()).toString();
+    let _withdrawBalance = withdrawBalanceFormat.slice(0, 6);
+    setWithdrawBalance(_withdrawBalance);
   }
   
   return (<>
@@ -92,7 +102,9 @@ export default function Vault() {
     </div>
         
   </div>
-  
+  </> : <></>}
+  {(!systemStore.loading && userStore.connected) ? <>
+      
     <div style={{
         textAlign: 'center',
         outline: 'groove',
@@ -102,14 +114,16 @@ export default function Vault() {
         marginTop: '50px',
         border: '4px outset white'
     }}>
-      {/* move user stake to store */}
+      {/* TODO: move user stake to store */}
       <p style={{fontSize: '24px'}}>Investment Account</p>
       <p style={{margin: 'none'}}>Amount Invested: {stakeAmount} ETH</p>
       <p style={{margin: 'none'}}>Earned Amount: {withdrawBalance} ETH</p>
-      <p>Read more about investing with Lost Vegas <a>here.</a> </p>
-      <input style={{width: '250px'}}/><button style={{width: '150px', marginLeft: '10px'}} onClick={() => {addStake()}}>Add Stake</button>
-      <input style={{width: '250px'}}/><button style={{width: '150px', marginLeft: '10px'}} onClick={() => {withdrawStake()}}>Withdraw Stake</button>
-    </div> </>: <></>}
+      <p>Read more about investing with Lost Vegas <Link to='/#investing'>here.</Link> </p>
+      
+      <input style={{ width: '250px', border: '4px inset #ccc', marginBottom: '5px'}}/><button style={{width: '170px', height: '30px', marginLeft: '10px'}} onClick={() => {addStake()}}>Add Stake</button>
+      <input style={{width: '250px', border: '4px inset #ccc'}}/><button style={{width: '170px', marginLeft: '10px', height: '30px'}} onClick={() => {withdrawStake()}}>Withdraw Stake</button>
+    </div> 
+    </> : <></>}
     </>
   )
 }

@@ -32,3 +32,18 @@ body {
 .align-items-center {
   align-items: center;
 }
+
+
+.banner {
+	background-image: -webkit-linear-gradient(92deg, red);
+	-webkit-animation: hue2 1s infinite linear;
+}
+
+@-webkit-keyframes hue2 {
+  from {
+    -webkit-filter: hue-rotate(0deg);
+  }
+  to {
+    -webkit-filter: hue-rotate(-20deg);
+  }
+}

@@ -23,17 +23,18 @@ import _CHIPS_ABI from '../../artifacts/contracts/DeVegasChips.sol/DeVegasChips.
 export const COINFLIP_ADDR : string = "0xaBcfB06099b3F018e9942eC539126634b4080940";
 export const COINFLIP_ABI = new Interface(_COINFLIP_ABI.abi);
 
-export const BANK_ADDR : string = "0x4f38C97900f168B74f4439658b0F45032f228983";
+export const BANK_ADDR : string = "0x36d1D0e9c3019dA4566770B891dC7c2De3F5c801";
 export const BANK_ABI = new Interface(_BANK_ABI.abi);
 
 export const CHIPS_ABI = new Interface(_CHIPS_ABI.abi);
 
 export const NETWORK = networkConfigs[0];
-export const DEV = false;
+export const DEV = true;
 
 export const ASSET_FOLDER = 'src/assets';
 export const IMG_FOLDER = `${ASSET_FOLDER}/img`
 
+export const GANACHE_URL = 'http://127.0.0.1:7545';
 
 export const DEV_CONTRACT_KEY = "";
 export const DEV_CONTRACT_ADDR = "";

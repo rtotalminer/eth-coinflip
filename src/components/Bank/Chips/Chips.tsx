@@ -17,10 +17,7 @@ import {
     UserStore,
     syncStore
 } from "../../../shared/store";
-import {
-    ContentPasteOffSharp,
-    LocalConvenienceStoreOutlined
-} from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 export function ExchangeForm(props: any) {
     const [asset2Value, setAsset2Value] = useState(0);
@@ -148,10 +145,10 @@ export default function Chips() {
                             <span>An error has occurred.</span>
                         </div> : <></>}
                         {(responseMsg === ResponseMessage.INFO) ? <div>
-                            <p>For every exchange there is a 10% tax, read more <a>here.</a></p>
+                            <p>For every exchange there is a 10% tax, read more <Link to='/#tax'>here.</Link></p>
                         </div> : <></>}
                         {(responseMsg === ResponseMessage.SUCCESS) ? <>
-                            <p>The transaction is succesful, view it <a>here.</a></p>
+                            <p>The transaction is succesful, view it <a href='#'>here.</a></p>
                         </> : <></>}
                         {(responseMsg === ResponseMessage.WAITING) ? <></> : <></>}
 

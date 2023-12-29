@@ -27,11 +27,16 @@ contract InvestorPool {
     //     return (poolEarnings/totalInvestorStake);
     // }
 
+    event BankBalanceUpdated(
+        uint256 bankBalance
+    );
+
     function addStake() public payable {
         require(msg.value >= MIN_INVESTMENT_AMOUNT, 'Stake is too small.');
         investors[msg.sender] = true;
         investorsStake[msg.sender] += msg.value;
         totalInvestorStake += msg.value;
+        emit BankBalanceUpdated(address(this).balance);
     }
 
     // More tax is paid in withdraw all
@@ -48,6 +53,7 @@ contract InvestorPool {
         investorsStake[msg.sender] = 0;
 
         (payable(msg.sender)).transfer(totalWithdrawal);
+        emit BankBalanceUpdated(address(this).balance);
     }
 
 }
@@ -77,6 +83,7 @@ contract Bank is Ownable, InvestorPool {
         uint256 weiAmount = (msg.value - fee);
         poolEarnings += fee/2;
         CHIPS_TOKEN.mint(msg.sender, weiAmount * ETH_CHIPS_EXCHANGE_RATE);
+        emit BankBalanceUpdated(address(this).balance);
     }
 
     function redeemChips(uint256 amount) public {
@@ -95,6 +102,7 @@ contract Bank is Ownable, InvestorPool {
         poolEarnings += fee/2;
         CHIPS_TOKEN.burn(msg.sender, amount);
         payable(msg.sender).transfer(redeemWeiAmount);
+        emit BankBalanceUpdated(address(this).balance);
     }
 
     function addAuthorisedCroupier(address _address) public onlyOwner {
