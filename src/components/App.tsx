@@ -6,6 +6,7 @@ import "../assets/img/goldcoinv2_0.png";
 import "../assets/img/goldcoinv2_1.png";
 import "../assets/img/goldcoinv2_2.png";
 import "../assets/img/gold_pile.png";
+import "../assets/img/coming-up.gif";
 import "../assets/img/pixil-frame-0.png";
 import './app.css';
 
@@ -19,6 +20,8 @@ import Header from "./main/Header/Header";
 import Coinflip from "./games/Coinflip/Coinflip";
 import { getSystemStoreState } from "../services/system";
 import { Contract, JsonRpcProvider } from "ethers";
+import Blackjack from "./games/Blackjack/Blackjack";
+import Slots from "./games/Slots/Slots";
 
 // Render this using markdown?
 const LostVegasIntro = () => {
@@ -124,7 +127,7 @@ export default function App() {
             if (localStorage.getItem(LOCAL_STORAGE.DARK_MODE) == `${true}`) {
                 systemStoreState = await getSystemStoreState();
             }
-            else if ( (!window?.ethereum || window?.ethereum == undefined) && DEV) {
+            else if (DEV) {
                 console.log('geting dataaaa')
                 userStore.provider = new JsonRpcProvider(GANACHE_URL);
                 userStore.contracts.Coinflip = new Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.provider);
@@ -169,6 +172,8 @@ export default function App() {
                 <Route path={`${BASE_URL}/`} element={<LostVegasIntro/>}/>
                 <Route path={`${BASE_URL}/chips`} element={<Chips/>} />
                 <Route path={`${BASE_URL}/coinflip`} element={<Coinflip/>} />
+                <Route path={`${BASE_URL}/blackjack`} element={<Blackjack/>} />
+                <Route path={`${BASE_URL}/slots`} element={<Slots/>} />
                 <Route path={`${BASE_URL}/vault`} element={<Vault/>} />
             </Routes>
             <Footer/>

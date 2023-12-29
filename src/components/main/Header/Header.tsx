@@ -22,6 +22,7 @@ const bankLinks = [
     {title: `The Vault 🏦`, link: '/vault'}
 ]
 
+
 export function DropdownNavButton(props: any) {
     return (
         <div className="dropdown link">

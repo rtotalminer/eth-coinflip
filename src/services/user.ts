@@ -56,6 +56,10 @@ export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: 
     return {user: user, connected: true, provider: provider, signer: signer, contracts: contracts};
 }
 
+export function getUserStateReadOnly() {
+    ;
+}
+
 export async function connectWallet() {
     const userStoreState = await getUserStoreState();
     UserStore.setState(userStoreState);
