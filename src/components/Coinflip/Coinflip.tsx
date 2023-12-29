@@ -145,7 +145,7 @@ const Coinflip = () => {
   return (
     <>
         {(!loading) ?
-        <div className='centre text-align-centre padding-top-s'>
+        <div className='centre text-align-centre padding-top-s' style={{marginTop: '50px'}}>
             <div className=''>
                 <div style={{fontSize: '36px', textAlign: 'center'}}>
                     Coinflip

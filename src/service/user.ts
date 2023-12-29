@@ -62,6 +62,7 @@ export async function connectWallet() {
 export async function disconnectWallet() {
     UserStore.setState(defaultUserStore);
     localStorage.setItem("isConnected", 'false');
+    handleAccountsChanged([]);
 }
 
 export async function handleAccountsChanged(_accounts: string[], ) {

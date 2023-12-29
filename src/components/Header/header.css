@@ -41,6 +41,13 @@
   color: white;
 }
 
+.llink {
+  display: block;
+  text-align: center;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
 li {
   display: block;
   text-align: center;

@@ -20,10 +20,10 @@ import _BANK_ABI from '../../artifacts/contracts/DeVegasChips.sol/Bank.json'
 
 import _CHIPS_ABI from '../../artifacts/contracts/DeVegasChips.sol/DeVegasChips.json'
 
-export const COINFLIP_ADDR : string = "0x8962487e0bBbAEc3762FCaDF4C93356C8B798C5E";
+export const COINFLIP_ADDR : string = "0xaBcfB06099b3F018e9942eC539126634b4080940";
 export const COINFLIP_ABI = new Interface(_COINFLIP_ABI.abi);
 
-export const BANK_ADDR : string = "0xdFB1f8A4F8c1B8bABcF077DCe5f81C1347D9fcBE";
+export const BANK_ADDR : string = "0x4f38C97900f168B74f4439658b0F45032f228983";
 export const BANK_ABI = new Interface(_BANK_ABI.abi);
 
 export const CHIPS_ABI = new Interface(_CHIPS_ABI.abi);
@@ -45,9 +45,9 @@ export const VERSION = {
   id: '0.1'
 }
 
+const GHPAGES_URL = '/eth-coinflip';
+const BASIC_URL = '';
+export const BASE_URL = BASIC_URL;
 
-// Contract: VRFCoordinatorV2Mock deployed to 0xB19E610174EF128fCfF93Af3829b11Ed406FDE34
-// Contract: VRFv2SubscriptionManagerMock deployed to 0xEdB1D54ceF008D286e928871cEA5dA09979666be
-// Contract: Coinflip deployed to 0x34fe2471863a64BcfA4677f8e6Cc8BE6B641e1B8
 
 

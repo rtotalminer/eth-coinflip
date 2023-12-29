@@ -14,11 +14,18 @@ contract Box {
 
 contract InvestorPool {
 
+    uint256 public poolEarnings;
     mapping(address => bool) public investors;
-    uint256 totalInvestorStake = 0;
-    mapping(address => uint256) investorsStake;
-    uint256 MIN_INVESTMENT_AMOUNT = 0.1 ether;
-    uint256 WITHDRAW_TAX = 40; //
+    uint256 public totalInvestorStake = 0;
+    mapping(address => uint256) public investorsStake;
+    uint256 public constant MIN_INVESTMENT_AMOUNT = 0.1 ether;
+    uint256 public constant WITHDRAW_TAX = 40; // de-incentize contioously pulling ouot on large gains
+    // add timelock?
+
+    /// why no worky?
+    // function calculateAPY() public view returns (uint256) {
+    //     return (poolEarnings/totalInvestorStake);
+    // }
 
     function addStake() public payable {
         require(msg.value >= MIN_INVESTMENT_AMOUNT, 'Stake is too small.');
@@ -30,18 +37,25 @@ contract InvestorPool {
     // More tax is paid in withdraw all
     function withdrawAllStake() public {
         require(investors[msg.sender], 'You must be an investor.');
-        uint256 share = investorsStake[msg.sender]/totalInvestorStake;
-        uint256 withdraw = share*address(this).balance;
-        require(
-            withdraw <= address(this).balance,
-            'The bank dosent have enough funds!'
-        );
+
+        uint256 initialStake = investorsStake[msg.sender];
+        uint256 earningsShare = (poolEarnings * initialStake) / totalInvestorStake;
+        uint256 totalWithdrawal = initialStake + earningsShare;
+
         investors[msg.sender] = false;
+        totalInvestorStake -= initialStake; // subtract the initial stake
+        poolEarnings -= earningsShare;
         investorsStake[msg.sender] = 0;
-        (payable(msg.sender)).transfer(withdraw);
-   }
+
+        (payable(msg.sender)).transfer(totalWithdrawal);
+    }
+
 }
 
+// have the investorpool 
+// if a user cant redeem his chips forr 0.1 eth
+// then he can sell them if the demand is high
+// a price will be set. this is the tokenomics
 
 contract Bank is Ownable, InvestorPool {
 
@@ -54,24 +68,31 @@ contract Bank is Ownable, InvestorPool {
 
     constructor()
     Ownable(msg.sender)
-    InvestorPool() {
+    {
         CHIPS_TOKEN = new DeVegasChips(address(this));
     }
-
-    // add a minimum limit to the bank
 
     function mintChips() public payable {
         uint256 fee = (msg.value * ETH_CHIPS_MINT_TAX_PERCENTAGE) / 100;
         uint256 weiAmount = (msg.value - fee);
+        poolEarnings += fee/2;
         CHIPS_TOKEN.mint(msg.sender, weiAmount * ETH_CHIPS_EXCHANGE_RATE);
     }
 
     function redeemChips(uint256 amount) public {
+        require(
+            address(this).balance  > maxWithdrawal(),
+            'The bank cant handle a loss greater than of its investments!'
+        );
         uint256 weiAmount = amount / ETH_CHIPS_EXCHANGE_RATE;
         uint256 fee = (weiAmount * ETH_CHIPS_REDEEM_TAX_PERCENTAGE) / 100;
         uint256 redeemWeiAmount = (weiAmount - fee);
-        require(redeemWeiAmount <= maxWithdrawal());
+        require(
+            address(this).balance - redeemWeiAmount >= maxWithdrawal(),
+            'The bank cannot fulfill this withdraw as it will bankrupt our investors.'
+        );
 
+        poolEarnings += fee/2;
         CHIPS_TOKEN.burn(msg.sender, amount);
         payable(msg.sender).transfer(redeemWeiAmount);
     }
@@ -98,6 +119,8 @@ contract Bank is Ownable, InvestorPool {
 }
 
 // burn on exernal transfer to stop chip  abritrage
+
+// change the name i cant thin of one
 
 //override trasner to only allow the bank
 

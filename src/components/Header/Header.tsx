@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { SystemStore, UserStore, syncStore } from "../../shared/store";
 
 import { connectWallet, disconnectWallet } from "../../service/user";
-import { BANK_ABI, BANK_ADDR, CHIPS_ABI, IMG_FOLDER } from "../../shared/config";
+import { BANK_ABI, BANK_ADDR, BASE_URL, CHIPS_ABI, IMG_FOLDER } from "../../shared/config";
 import { ethers, formatEther } from "ethers";
 
 const gameLinks = [
@@ -66,9 +66,9 @@ function ConnectButton() {
     const userStore = syncStore(UserStore);
 
     const connectButton = <>
-        <span className='float-right link' onClick={() => {connectWallet()}}>
-            <b>Connect</b>
-        </span> 
+        <div className='float-right' onClick={() => {connectWallet()}}>
+            <span className='llink link'>Connect</span>
+        </div> 
     </>
 
     const accountInfo = <>
@@ -88,7 +88,7 @@ function ConnectButton() {
                 <i className="fa fa-caret-down"></i>
             </div>
             <div className="dropdown-content">
-                <Link to="/chips">My Account</Link>
+                <Link to={`${BASE_URL}/chips`}>My Account</Link>
                 <a onClick={() => {disconnectWallet()}} href="#">Disconnect</a>
             </div>
         </div> 

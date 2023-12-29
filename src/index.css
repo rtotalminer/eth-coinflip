@@ -20,3 +20,7 @@ time, mark, audio, video, input {
 	font: inherit;
   font-family: 'DM Mono', monospace;
 }
+
+a {
+  cursor: pointer;
+}

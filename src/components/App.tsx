@@ -18,9 +18,10 @@ import "../assets/img/pixil-frame-0.png";
 import './app.css';
 
 import { getUserStoreState, handleAccountsChanged, handleChainChanged } from "../service/user";
-import { LOCAL_STORAGE } from "../shared/config";
+import { BASE_URL, LOCAL_STORAGE } from "../shared/config";
 import Chips from "./Bank/Chips/Chips";
 import Vault from "./Bank/Vault/Vault";
+import Footer from "./Footer";
 
 export default function App() {
 
@@ -30,6 +31,9 @@ export default function App() {
     }
 
     const systemStore = syncStore(SystemStore);
+    const userStore = syncStore(UserStore);
+
+    const [connErrMsg, setConnErrMsg] = useState('');
 
     useEffect(() => {
         if (!systemStore.loading)  return;
@@ -55,21 +59,43 @@ export default function App() {
             .catch(console.error);
     }, [systemStore.loading])
 
+    useEffect(() => {
+        if (userStore.connected)  return;
+        if (systemStore.loading) return;
+        const load = async () => {
+            // getNetwork
+            setConnErrMsg('Unable to connect to a provier or signer.')
+        }
+        load().then((res) => {
+            })
+            .catch(console.error);
+    }, [userStore.connected])
+
       const homeComponent = <>
         <div className="centre container">
             Welcome to LostVegas, a decetralised autonamous casino ran by governance chips.
         </div>
       </>
+
+      console.log(BASE_URL)
   
     return (
         <Router basename="/">
+            {(!systemStore.loading && !userStore.connected) ?
+                <div
+                    style={{backgroundColor: 'red', textAlign: 'center', color: 'black'}}
+                >
+                    <b>{connErrMsg}</b>
+                </div>
+            : <></>}
             <Header />
             <Routes>
-                <Route path="/" element={homeComponent}/>
-                <Route path="/chips" element={<Chips/>} />
-                <Route path="/coinflip" element={<Coinflip/>} />
-                <Route path="/vault" element={<Vault/>} />
+                <Route path={`${BASE_URL}/`} element={homeComponent}/>
+                <Route path={`${BASE_URL}/chips`} element={<Chips/>} />
+                <Route path={`${BASE_URL}/coinflip`} element={<Coinflip/>} />
+                <Route path={`${BASE_URL}/vault`} element={<Vault/>} />
             </Routes>
+            <Footer/>
         </Router>
     );
 };
