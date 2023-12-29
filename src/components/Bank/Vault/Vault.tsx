@@ -16,6 +16,9 @@ export default function Vault() {
   const [poolAPY, setPoolAPY] = useState('0');
   const [withdrawBalance, setWithdrawBalance] = useState('0');
 
+  const [addStakeVal, setAddStakeVal] = useState('0');
+  const [addWithdrawVal, setAddWithdrawVal] = useState('0');
+
     useEffect(() => {
         if (!userStore.connected && !userStore.provider)  return;
         const load = async () => {
@@ -38,12 +41,15 @@ export default function Vault() {
   }, [userStore.connected]);
 
   async function addStake() {
-    let tx = await userStore.contracts.Bank.addStake({value: parseEther('1.0')});
+    if (!userStore.connected)  return;
+    console.log(addStakeVal);
+    let tx = await userStore.contracts.Bank.addStake({value: parseEther(`${addStakeVal}`)});
     await tx.wait();
   }
 
   async function withdrawStake() {
     if (!userStore.connected)  return;
+    console.log(addWithdrawVal);
     let tx = await userStore.contracts.Bank.withdrawAllStake();
     await tx.wait();
   }
@@ -98,7 +104,7 @@ export default function Vault() {
     }}>
     <div>
         <p style={{fontSize: '32px'}}>The bank holds {bankBalanace} ETH</p>
-        <p style={{fontSize: '24px'}}>With investors contributing <br></br>{investorsBalanace} ETH, earning {poolAPY}% APY.</p>
+        <p style={{fontSize: '24px'}}>With investors contributing <br></br>{investorsBalanace} ETH, earning {poolAPY}% interest.</p>
     </div>
         
   </div>
@@ -120,8 +126,8 @@ export default function Vault() {
       <p style={{margin: 'none'}}>Earned Amount: {withdrawBalance} ETH</p>
       <p>Read more about investing with Lost Vegas <Link to='/#investing'>here.</Link> </p>
       
-      <input style={{ width: '250px', border: '4px inset #ccc', marginBottom: '5px'}}/><button style={{width: '170px', height: '30px', marginLeft: '10px'}} onClick={() => {addStake()}}>Add Stake</button>
-      <input style={{width: '250px', border: '4px inset #ccc'}}/><button style={{width: '170px', marginLeft: '10px', height: '30px'}} onClick={() => {withdrawStake()}}>Withdraw Stake</button>
+      <input value={addStakeVal} onChange={(event) => setAddStakeVal(event.target.value)} style={{ width: '250px', border: '4px inset #ccc', marginBottom: '5px'}}/><button style={{width: '170px', height: '30px', marginLeft: '10px'}} onClick={() => {addStake()}}>Add Stake</button>
+      <input disabled={true} value={addWithdrawVal} onChange={(event) => setAddWithdrawVal(event.target.value)} style={{width: '250px', border: '4px inset #ccc'}}/><button style={{width: '170px', marginLeft: '10px', height: '30px'}} onClick={() => {withdrawStake()}}>Withdraw Stake</button>
     </div> 
     </> : <></>}
     </>

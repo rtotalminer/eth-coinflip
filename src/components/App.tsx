@@ -150,7 +150,6 @@ export default function App() {
         if (userStore.connected)  return;
         if (systemStore.loading) return;
         const load = async () => {
-            // getNetwork
         }
         load().then((res) => {
             })

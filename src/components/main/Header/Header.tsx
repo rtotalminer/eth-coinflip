@@ -22,6 +22,11 @@ const bankLinks = [
     {title: `The Vault 🏦`, link: '/vault'}
 ]
 
+const shopLinks = [
+    {title: `Drops`, link: '/drops'},
+    {title: `Merchandise`, link: '/merchandise'}
+]
+
 
 export function DropdownNavButton(props: any) {
     return (
@@ -67,7 +72,7 @@ function ConnectButton() {
     const userStore = syncStore(UserStore);
 
     const connectButton = <>
-        <div className='float-right' onClick={() => {connectWallet()}}>
+        <div className='float-right' onClick={() => {connectWallet().catch((err) => console.error(err))}}>
             <span className='llink link' style={{fontSize: '18px'}}>Connect</span>
         </div> 
     </>
@@ -116,6 +121,8 @@ export default function Header() {
                 </Link>
                 <DropdownNavButton title='Games' links={gameLinks}/>
                 <DropdownNavButton title='Bank' links={bankLinks}/>
+                <DropdownNavButton title='Shop' links={shopLinks}/>
+
             </div>
             <div id='info' className='align-items-center float-right display-flex padding-10px'>
                 {(!systemStore.loading) ? (

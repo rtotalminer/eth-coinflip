@@ -7,6 +7,7 @@ import { IContracts, IUser, IUserStoreState, UserStore, defaultUserStore } from 
 
 import { ALLOWED_NETWORKS, COINFLIP_ADDR, DEV, GANACHE_URL } from "../shared/config";
 import { BANK_ABI, BANK_ADDR, CHIPS_ABI, COINFLIP_ABI } from "../shared/config";
+import { LocalConvenienceStoreOutlined } from "@mui/icons-material";
 
 
 export async function getUserChipsBalance(of: string, signer: any) : Promise<string> {
@@ -45,13 +46,14 @@ export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: 
     }
 
     signer = await provider.getSigner();
-    let address = await signer.getAddress()
-    let chips = await getUserChipsBalance(address, signer);
-    user = {address: address, chips: chips};
+    let address = await signer.getAddress();
 
     contracts.Coinflip = new Contract(COINFLIP_ADDR, COINFLIP_ABI, signer);
     contracts.Bank = new Contract(BANK_ADDR, BANK_ABI, signer);
     contracts.Chips = new Contract(await contracts.Bank.CHIPS_TOKEN(), CHIPS_ABI, signer);
+
+    let chips = await contracts.Chips.balanceOf(address).catch((err) => console.error);
+    user = {address: address, chips: chips};
 
     return {user: user, connected: true, provider: provider, signer: signer, contracts: contracts};
 }
@@ -61,7 +63,9 @@ export function getUserStateReadOnly() {
 }
 
 export async function connectWallet() {
+    console.log('connecting wallet');
     const userStoreState = await getUserStoreState();
+    console.log(userStoreState);
     UserStore.setState(userStoreState);
     localStorage.setItem("isConnected", userStoreState.connected.toString());
 }
