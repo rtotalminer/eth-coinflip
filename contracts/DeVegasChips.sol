@@ -7,23 +7,58 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 import './Coinflip.sol';
 
-contract Bank is Ownable {
+//  just holds eth
+contract Box {
+
+}
+
+contract InvestorPool {
+
+    mapping(address => bool) public investors;
+    uint256 totalInvestorStake = 0;
+    mapping(address => uint256) investorsStake;
+    uint256 MIN_INVESTMENT_AMOUNT = 0.1 ether;
+    uint256 WITHDRAW_TAX = 40; //
+
+    function addStake() public payable {
+        require(msg.value >= MIN_INVESTMENT_AMOUNT, 'Stake is too small.');
+        investors[msg.sender] = true;
+        investorsStake[msg.sender] += msg.value;
+        totalInvestorStake += msg.value;
+    }
+
+    // More tax is paid in withdraw all
+    function withdrawAllStake() public {
+        require(investors[msg.sender], 'You must be an investor.');
+        uint256 share = investorsStake[msg.sender]/totalInvestorStake;
+        uint256 withdraw = share*address(this).balance;
+        require(
+            withdraw <= address(this).balance,
+            'The bank dosent have enough funds!'
+        );
+        investors[msg.sender] = false;
+        investorsStake[msg.sender] = 0;
+        (payable(msg.sender)).transfer(withdraw);
+   }
+}
+
+
+contract Bank is Ownable, InvestorPool {
 
     DeVegasChips public CHIPS_TOKEN;
-    address public CHIPS_TOKEN_ADDRESS;
-
     mapping(address => bool) AUTHORISED_CROUPIERS;
-
     uint256 ETH_CHIPS_EXCHANGE_RATE = 1_000_000;
     uint256 ETH_CHIPS_MINT_TAX_PERCENTAGE = 10;
     uint256 ETH_CHIPS_REDEEM_TAX_PERCENTAGE = 10;
     uint256 MAX_WITHDRAWAL_PERCENTAGE = 30;
 
     constructor()
-    Ownable(msg.sender) {
+    Ownable(msg.sender)
+    InvestorPool() {
         CHIPS_TOKEN = new DeVegasChips(address(this));
-        CHIPS_TOKEN_ADDRESS = address(CHIPS_TOKEN);
     }
+
+    // add a minimum limit to the bank
 
     function mintChips() public payable {
         uint256 fee = (msg.value * ETH_CHIPS_MINT_TAX_PERCENTAGE) / 100;
@@ -57,12 +92,8 @@ contract Bank is Ownable {
         return true;
     }
 
-    function maxWithdrawal() internal view returns (uint256) {
-        return ((address(this).balance) * MAX_WITHDRAWAL_PERCENTAGE) / 100;
-    }
-
-    function getBalance() public view returns (uint256) {
-        return address(this).balance;
+    function maxWithdrawal() public view returns (uint256) {
+        return (address(this).balance * MAX_WITHDRAWAL_PERCENTAGE) / 100;
     }
 }
 

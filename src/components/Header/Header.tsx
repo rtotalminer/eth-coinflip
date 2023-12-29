@@ -8,19 +8,18 @@ import { Link } from "react-router-dom";
 import { SystemStore, UserStore, syncStore } from "../../shared/store";
 
 import { connectWallet, disconnectWallet } from "../../service/user";
-import { BANK_ABI, BANK_ADDR, CHIPS_ABI, IMG_FOLDER } from "../../utils/config";
+import { BANK_ABI, BANK_ADDR, CHIPS_ABI, IMG_FOLDER } from "../../shared/config";
 import { ethers, formatEther } from "ethers";
 
 const gameLinks = [
     {title: 'Coinflip (new)', link: '/coinflip'},
     {title: 'Slots - Coming Soon!', link: '/slots'},
     {title: 'Blackjack - Coming Soon!', link: '/blackjack'},
-    {title: 'Lottery - Coming Soon!', link: '/lottery'},
 ]
 
 const bankLinks = [
-    {title: 'Mint Chips', link: '/chips'},
-    {title: 'Vault', link: '/vault'}
+    {title: `Cashier's Cage`, link: '/chips'},
+    {title: `The Vault`, link: '/vault'}
 ]
 
 export function DropdownNavButton(props: any) {
@@ -30,8 +29,8 @@ export function DropdownNavButton(props: any) {
                 <i className="fa fa-caret-down"></i>
             </div>
             <div className="dropdown-content">
-                {props.links.map((link: any) => (
-                    <Link to={link.link}>{link.title}</Link>
+                {props.links.map((link: any, i: any) => (
+                    <Link key={i} to={link.link}>{link.title}</Link>
                 ))}
             </div>
         </div>  
@@ -112,7 +111,7 @@ export default function Header() {
         <div id='header' className="container">
             <div id='navbar' className='align-items-center float-left display-flex padding-10px'>
                 <Link to='/' className='logo link'>
-                    DesVegas
+                    Lost Vegas
                 </Link>
                 <DropdownNavButton title='Games' links={gameLinks}/>
                 <DropdownNavButton title='Bank' links={bankLinks}/>

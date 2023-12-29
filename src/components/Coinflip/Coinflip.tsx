@@ -1,19 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { Contract, ethers, formatEther, parseEther } from 'ethers';
 
-import { UserStore, syncStore } from '../../shared/store';
-import { COINFLIP_ADDR, COINFLIP_ABI, DEV } from '../../utils/config';
+import { SystemStore, UserStore, syncStore } from '../../shared/store';
+import { COINFLIP_ADDR, COINFLIP_ABI, DEV } from '../../shared/config';
 
 import CoinAnimation from './CoinAnimation';
 import './coinflip.css';
 
 import _COINFLIP_ABI from '../../../artifacts/contracts/Coinflip.sol/Coinflip.json'
-import { CheckBoxOutlineBlank, NorthWest, SignLanguageRounded } from '@mui/icons-material';
-
 
 const Coinflip = () => {
 
     const userStore = syncStore(UserStore);
+    const systemStore = syncStore(SystemStore);
 
     enum ResultsMsgEnum {
         NONE,
@@ -42,14 +41,12 @@ const Coinflip = () => {
         setRequestId(0);
 
         // display yyay you won (so what if user refreshes have a prev rersults later)
-        console.log(_recentBet);
 
         recentBet.current = _recentBet;
 
         console.log(recentBet);
 
         if (_recentBet[3] == _recentBet[4]) {
-            console.log('grats u woon');
         }
 
         setResulsMsg(ResultsMsgEnum.RESOLVED);
@@ -59,18 +56,21 @@ const Coinflip = () => {
     }
 
     async function getRequestId() {
-        let coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
-        let _requestId = (await coinflipContract.playerIds(userStore.accounts[0]));
-        console.log(_requestId);
-        return _requestId;
+        let playerId = await userStore.contracts.Coinflip.playerIds(userStore.user.address);
+        return playerId;
     }
 
     async function fireCoinflip() {
-        let coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
-        let tx = await coinflipContract.flip(0, parseEther(amount));
-        let receipt = await tx.wait();
-        const _requestId = await getRequestId();
-        return _requestId;
+        try {
+            let tx = await userStore.contracts.Coinflip.flip(0, parseEther(amount));
+            let receipt = await tx.wait();
+            return (await getRequestId());
+        }
+        catch (err) {
+            console.log(err);
+            return 0;
+        }
+       
     }
 
     async function waitFulfillment(_requestId: number) {
@@ -86,27 +86,8 @@ const Coinflip = () => {
         });
     }
 
-    function resolveEvent(bet: any) {
-        console.log(bet);
-        // let msg = ''
-        // if (event[3] == event[4]) {
-        //     msg = `Congratulations! You've won ${event[5]}`;
-        // }
-        // else {
-        //     msg = `The bank won, ${event[2]}`;
-        // }
-        // return msg;
-    }
-
-    async function getDebts() {
-        let coinflipContract = new ethers.Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.signer);
-        let debts = await coinflipContract.debts(userStore.accounts[0]);
-        setDebts(formatEther(debts));
-    }
-
     useEffect(() => {
-        console.log(loading);
-        if (loading)  return;
+        if (!userStore.connected)  return;
         const result = async () => {
             let _requestId = await getRequestId();
             setRequestId(_requestId);
@@ -115,19 +96,14 @@ const Coinflip = () => {
         result().then((res) => {
             setIsLoading(false);
         }).catch(console.error);
-    }, []);
+    }, [systemStore.loading]);
 
     useEffect(() => {
-    }, [loading]);
-
-    useEffect(() => {
-        console.log(requestId);
         if (requestId == -1 )  return;
         if (requestId != 0 )  return;
         
         const result = async () => {
             let _requestId = await fireCoinflip();
-            console.log(_requestId);
             setFiredCoinflip(false);
             return { _requestId }
         }
@@ -137,13 +113,13 @@ const Coinflip = () => {
     }, [firedCoinflip]);
 
     useEffect(() => {
+        console.log(requestId);
         if (requestId == 0 )  return;
         if (requestId == -1 ) {
             setRequestId(0);
             return;
         }
 
-        
         setIsAnimating(true);
         setResulsMsg(ResultsMsgEnum.AWAITING);
 
@@ -165,11 +141,6 @@ const Coinflip = () => {
     const resolvedMsg = <>
         
     </>;
-
-    async function onCashOut() {
-    }
-
-    
 
   return (
     <>

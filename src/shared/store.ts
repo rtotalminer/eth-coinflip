@@ -1,3 +1,4 @@
+import { Contract } from "ethers";
 import { connect } from "http2";
 import { useSyncExternalStore } from "react";
 
@@ -61,15 +62,29 @@ export interface IUser {
     chips : string;
 }
 
-export interface IUserStoreState {
-    user: IUser;
-    connected: boolean;
-    provider: object;
-    signer: object;
+export interface IContracts {
+  Coinflip?: Contract,
+  Bank?: Contract,
+  Chips?: Contract
 }
 
+export interface IUserStoreState {
+  user: IUser;
+  connected: boolean;
+  provider: object;
+  signer: object;
+  contracts: IContracts;
+}
+
+export const defaultContracts : IContracts = {}
 export const defaultUser : IUser = {address: '', chips: ''}
-export const defaultUserStore : IUserStoreState = {user: defaultUser, connected: false, provider: {}, signer: {}}
+export const defaultUserStore : IUserStoreState = {
+  user: defaultUser,
+  connected: false,
+  provider: {},
+  signer: {},
+  contracts: defaultContracts
+}
 export const UserStore = Store(defaultUserStore);
 
 

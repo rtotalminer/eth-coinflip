@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
+  "url": "git+https://github.com/rtotalminer/eth-coinflip.git",
+  "homepage": "git+https://github.com/rtotalminer/eth-coinflip.git",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack",
-    "dev": "webpack serve"
+    "dev": "webpack serve",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "keywords": [],
   "author": "",
@@ -45,6 +49,7 @@
     "@types/react-dom": "^18.2.18",
     "babel-loader": "^9.1.3",
     "css-loader": "^6.8.1",
+    "gh-pages": "^6.1.1",
     "hardhat": "^2.19.2",
     "html-webpack-plugin": "^5.5.4",
     "style-loader": "^3.3.3",

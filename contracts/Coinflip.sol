@@ -88,14 +88,12 @@ contract Coinflip is VRFv2Consumer {
         if (outcome == 0) { decision = CoinDecision.HEADS; }
         if (outcome == 1) { decision = CoinDecision.TAILS; }
 
-        if (bets[_requestId].prediction == decision)
-            bank.croupierMint(bets[_requestId].payout, bets[_requestId].player);
+        if (hasPlayerBet[bets[_requestId].player])
+            if (bets[_requestId].prediction == decision)
+                bank.croupierMint(bets[_requestId].payout, bets[_requestId].player);
 
         bets[_requestId].outcome = decision;
         hasPlayerBet[bets[_requestId].player] = false;
         playerIds[bets[_requestId].player] = 0;
     }
-
-    function withdraw() public
-    {}
 }

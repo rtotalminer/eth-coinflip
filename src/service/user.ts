@@ -1,10 +1,10 @@
 
 // f(x): get the provider and set it to the store...
 
-import { BrowserProvider, JsonRpcSigner, ethers } from "ethers";
-import { IUser, IUserStoreState, UserStore, defaultUserStore } from "../shared/store";
-import { ALLOWED_NETWORKS } from "../shared/config";
-import { BANK_ABI, BANK_ADDR, CHIPS_ABI } from "../utils/config";
+import { BrowserProvider, Contract, JsonRpcSigner, ethers } from "ethers";
+import { IContracts, IUser, IUserStoreState, UserStore, defaultUserStore } from "../shared/store";
+import { ALLOWED_NETWORKS, COINFLIP_ADDR } from "../shared/config";
+import { BANK_ABI, BANK_ADDR, CHIPS_ABI, COINFLIP_ABI } from "../shared/config";
 import { ConstructionOutlined } from "@mui/icons-material";
 
 export async function getUserChipsBalance(of: string, signer: any) : Promise<string> {
@@ -21,7 +21,14 @@ export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: 
     let user : IUser = { address: '', chips: '' }
     let signer: JsonRpcSigner | any = {};
     let provider : BrowserProvider;
-    let userStoreState : IUserStoreState = { user: user, connected: false, provider: {}, signer: signer};
+    let contracts : IContracts = {};
+    let userStoreState : IUserStoreState = {
+        user: user,
+        connected: false,
+        provider: {},
+        signer: signer,
+        contracts: contracts
+    };
     
     if (window?.ethereum.isMetaMask || window?.ethereum.isConnected()) {
         if ((await window.ethereum._metamask.isUnlocked()) == false) {
@@ -36,7 +43,12 @@ export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: 
         let address = await signer.getAddress()
         let chips = await getUserChipsBalance(address, signer);
         user = {address: address, chips: chips};
-        return {user: user, connected: true, provider: provider, signer: signer};
+
+        contracts.Coinflip = new Contract(COINFLIP_ADDR, COINFLIP_ABI, signer);
+        contracts.Bank = new Contract(BANK_ADDR, BANK_ABI, signer);
+        contracts.Chips = new Contract(await contracts.Bank.CHIPS_TOKEN(), CHIPS_ABI, signer);
+
+        return {user: user, connected: true, provider: provider, signer: signer, contracts: contracts};
     }
     return userStoreState;
 }

@@ -19,7 +19,8 @@ import './app.css';
 
 import { getUserStoreState, handleAccountsChanged, handleChainChanged } from "../service/user";
 import { LOCAL_STORAGE } from "../shared/config";
-import Chips from "./Bank/Chips";
+import Chips from "./Bank/Chips/Chips";
+import Vault from "./Bank/Vault/Vault";
 
 export default function App() {
 
@@ -56,7 +57,7 @@ export default function App() {
 
       const homeComponent = <>
         <div className="centre container">
-            Welcome to DeVegas, a decetralised autonamous casino ran by governance chips.
+            Welcome to LostVegas, a decetralised autonamous casino ran by governance chips.
         </div>
       </>
   
@@ -67,6 +68,7 @@ export default function App() {
                 <Route path="/" element={homeComponent}/>
                 <Route path="/chips" element={<Chips/>} />
                 <Route path="/coinflip" element={<Coinflip/>} />
+                <Route path="/vault" element={<Vault/>} />
             </Routes>
         </Router>
     );

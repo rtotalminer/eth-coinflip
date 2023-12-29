@@ -1,5 +1,5 @@
 import { JsonRpcApiProviderOptions, JsonRpcSigner, ethers } from "ethers";
-import { DEV, NETWORK, allowedNetworks } from "./config";
+import { DEV, NETWORK, allowedNetworks } from "../shared/config";
 import { developmentChains, networkConfigs } from "../../utils/config";
 
 export async function handleConnection() {
