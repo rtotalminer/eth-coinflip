@@ -10,8 +10,10 @@ import "../assets/img/coming-up.gif";
 import "../assets/img/pixil-frame-0.png";
 import './app.css';
 
+import loadash from 'lodash';
+
 import { getUserStoreState, handleAccountsChanged, handleChainChanged } from "../services/user";
-import { BANK_ABI, BANK_ADDR, BASE_URL, CHIPS_ABI, COINFLIP_ABI, COINFLIP_ADDR, DEV, GANACHE_URL, IMG_FOLDER, LOCAL_STORAGE } from "../shared/config";
+import { BANK_ABI, BANK_ADDR, BASE_URL, CHIPS_ABI, COINFLIP_ABI, COINFLIP_ADDR, DEV, GANACHE_URL, IMG_FOLDER, LOCAL_STORAGE, PRODUCTION } from "../shared/config";
 
 import Chips from "./bank/Chips/Chips";
 import Vault from "./bank/Vault/Vault";
@@ -121,19 +123,16 @@ export default function App() {
             let userStoreState: IUserStoreState = defaultUserStore;
             let systemStoreState: ISystemStoreState = defaultSystemStore;
 
+            // Connect to a public network...
+            if (PRODUCTION) {
+                userStoreState.provider = new JsonRpcProvider(GANACHE_URL);
+            }
+
             if (localStorage.getItem(LOCAL_STORAGE.CONNECTION) == `${true}`) {
                 userStoreState = await getUserStoreState();
             }
             if (localStorage.getItem(LOCAL_STORAGE.DARK_MODE) == `${true}`) {
                 systemStoreState = await getSystemStoreState();
-            }
-            else if (DEV) {
-                console.log('geting dataaaa')
-                userStore.provider = new JsonRpcProvider(GANACHE_URL);
-                userStore.contracts.Coinflip = new Contract(COINFLIP_ADDR, COINFLIP_ABI, userStore.provider);
-                userStore.contracts.Bank = new Contract(BANK_ADDR, BANK_ABI, userStore.provider);
-                userStore.contracts.Chips = new Contract(await userStore.contracts.Bank.CHIPS_TOKEN(), CHIPS_ABI, userStore.provider);
-                systemStoreState.connectionErrMsg = 'Connection to provider only established!'
             }
             return {systemStoreState, userStoreState};
         }
@@ -155,6 +154,13 @@ export default function App() {
             })
             .catch(console.error);
     }, [userStore.connected])
+
+    useEffect(() => {
+        if (!loadash.isEmpty(userStore.provider)) {
+            console.log(userStore.provider);
+            systemStore.connectionErrMsg = "Cannot connect to a wallet or a signer.";
+        }
+    }, [userStore.provider])
   
     return (
         <Router basename="/">

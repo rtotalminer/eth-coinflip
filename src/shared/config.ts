@@ -30,6 +30,7 @@ export const CHIPS_ABI = new Interface(_CHIPS_ABI.abi);
 
 export const NETWORK = networkConfigs[0];
 export const DEV = true;
+export const PRODUCTION = true;
 
 export const ASSET_FOLDER = 'src/assets';
 export const IMG_FOLDER = `${ASSET_FOLDER}/img`

@@ -10,6 +10,7 @@ import { SystemStore, UserStore, syncStore } from "../../../shared/store";
 import { connectWallet, disconnectWallet } from "../../../services/user";
 import { BANK_ABI, BANK_ADDR, BASE_URL, CHIPS_ABI, IMG_FOLDER } from "../../../shared/config";
 import { ethers, formatEther } from "ethers";
+import { LocalConvenienceStoreOutlined } from "@mui/icons-material";
 
 const gameLinks = [
     {title: 'Coinflip (new) 🟡', link: '/coinflip'},
@@ -45,8 +46,25 @@ export function DropdownNavButton(props: any) {
 
 export function ChipsInfo() {
 
-    const [chipsBalance, setChipsBalane] = useState(0);
     const userStore = syncStore(UserStore);
+
+    useEffect(() => {
+        if (!userStore.connected)  return;
+        const load = async () => {
+            let chips = await userStore.contracts.Chips.balanceOf(userStore.user.address);
+            userStore.user.chips = chips;
+            UserStore.setState(userStore);
+        } 
+        const sub = async () => {
+          // TODO: remember to unsubscribe from this event?
+          let event = await userStore.contracts.Chips.on("Transfer", (from: any, to: any, value: any) => {
+            if (from || to == userStore.user.address)
+                console.log('updatinig coins bal')
+                load();
+          }); 
+        }
+        load().then(() => {sub()}).catch((err) => {console.log(err)});
+  }, [userStore.connected]);
 
     return (
         <>

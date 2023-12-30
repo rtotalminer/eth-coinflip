@@ -15,6 +15,7 @@ export default function Vault() {
   const [stakeAmount, setStakeAmount] = useState('0');
   const [poolAPY, setPoolAPY] = useState('0');
   const [withdrawBalance, setWithdrawBalance] = useState('0');
+  // poolEarningspoolEarnings
 
   const [addStakeVal, setAddStakeVal] = useState('0');
   const [addWithdrawVal, setAddWithdrawVal] = useState('0');
@@ -22,7 +23,6 @@ export default function Vault() {
     useEffect(() => {
         if (!userStore.connected && !userStore.provider)  return;
         const load = async () => {
-          console.log(userStore)
             if (userStore.signer) {
               await getStake();
               await getWithdrawBalance();
@@ -33,7 +33,7 @@ export default function Vault() {
         } 
         const subToData = async () => {
           // TODO: remember to unsubscribe from this event?
-          let bankBalanceEvent = await userStore.contracts.Bank.on("BankBalanceUpdated", (bankBalanace: any) => {
+          let event = await userStore.contracts.Bank.on("BankBalanceUpdated", (bankBalanace: any) => {
             load();
           }); 
         }
@@ -42,20 +42,17 @@ export default function Vault() {
 
   async function addStake() {
     if (!userStore.connected)  return;
-    console.log(addStakeVal);
     let tx = await userStore.contracts.Bank.addStake({value: parseEther(`${addStakeVal}`)});
     await tx.wait();
   }
 
   async function withdrawStake() {
     if (!userStore.connected)  return;
-    console.log(addWithdrawVal);
     let tx = await userStore.contracts.Bank.withdrawAllStake();
     await tx.wait();
   }
 
   async function getBankBalance() {
-    console.log(userStore.provider)
     const _bankBalance = await userStore.provider.getBalance(BANK_ADDR);  
     setBankBalance(formatEther(_bankBalance.toString()).toString());      
   }

@@ -37,7 +37,8 @@ export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: 
         }
     }
 
-    else if ( (!window?.ethereum || window?.ethereum == undefined) && DEV) {
+    else if ( (!window?.ethereum || window?.ethereum == undefined)) {
+        // Connect to a public network...
         provider = new JsonRpcProvider(GANACHE_URL);
     }
 
@@ -57,6 +58,7 @@ export async function getUserStoreState() : Promise<IUserStoreState> { // TODO: 
 
     return {user: user, connected: true, provider: provider, signer: signer, contracts: contracts};
 }
+
 
 export function getUserStateReadOnly() {
     ;

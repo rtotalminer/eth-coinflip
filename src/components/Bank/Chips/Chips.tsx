@@ -18,23 +18,24 @@ import {
     syncStore
 } from "../../../shared/store";
 import { Link } from "react-router-dom";
+import { formatNaN } from "../../../services/helpers";
 
 export function ExchangeForm(props: any) {
-    const [asset2Value, setAsset2Value] = useState(0);
+    const [asset2Value, setAsset2Value] = useState('1000000');
     const [exchangeRate, setExchangeRate] = useState(1_000_000);
     
     const [assetFrom, setAssetFrom] = useState('ether');
 
     const handleAsset1Change = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseFloat((event.target.value == undefined) ? '0' : event.target.value);
+        const value = (formatNaN(event.target.value) == 0) ? '' : event.target.value;
         props.setAsset1Value(value);
-        setAsset2Value(value * exchangeRate);
+        setAsset2Value((Number(value) * exchangeRate).toString());
     };
 
     const handleAsset2Change = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const value = parseFloat((event.target.value == undefined) ? '0' : event.target.value);
+        const value = (formatNaN(event.target.value) == 0) ? '' : event.target.value;
         setAsset2Value(value);
-        props.setAsset1Value(value / exchangeRate);
+        props.setAsset1Value(Number(value) / exchangeRate);
     };
 
     const handleSwapAssets = () => {
@@ -87,23 +88,24 @@ export default function Chips() {
     const [responseMsg, setResponseMsg] = useState(ResponseMessage.INFO);
 
     const [assetTo, setAssetTo] = useState('chips');
-    const [asset1Value, setAsset1Value] = useState(0);
+    const [asset1Value, setAsset1Value] = useState(1);
 
     const handleExchange = async () => {
+        if (!userStore.connected)  return;
         if (!(asset1Value > 0)) {
             setResponseMsg(ResponseMessage.ERROR);
             return;
         }
         console.log(assetTo);
-        setResponseMsg(ResponseMessage.WAITING);
         if (assetTo == 'ether') {
             console.log(userStore)
             let tx = await userStore.contracts.Bank.redeemChips(parseUnits(asset1Value.toString()))
                 .then(() => {
-                    setResponseMsg(ResponseMessage.SUCCESS);
+                    setResponseMsg(ResponseMessage.WAITING);
+                    // wait forr burn function of erc-20
+                    
                 })
                 .catch((err: any) => {
-                    console.log(err);
                     setResponseMsg(ResponseMessage.ERROR);
                     return;
                 });
@@ -111,7 +113,14 @@ export default function Chips() {
         if (assetTo == 'chips') {
             let tx = await userStore.contracts.Bank.mintChips({ value: parseEther((asset1Value).toString()) })
                 .then(() => {
-                    setResponseMsg(ResponseMessage.SUCCESS);
+                    setResponseMsg(ResponseMessage.WAITING);
+                    let event = userStore.contracts.Chips.on("Transfer", (from: any, to: any, amount: any) => {
+                        console.log({from, to, amount});
+                        if (to == userStore.user.address) {
+                            setResponseMsg(ResponseMessage.SUCCESS);
+                            event.remove();
+                        }
+                    });
                 })
                 .catch(() => {
                     setResponseMsg(ResponseMessage.ERROR);
@@ -150,7 +159,9 @@ export default function Chips() {
                         {(responseMsg === ResponseMessage.SUCCESS) ? <>
                             <p>The transaction is succesful, view it <a href='#'>here.</a></p>
                         </> : <></>}
-                        {(responseMsg === ResponseMessage.WAITING) ? <></> : <></>}
+                        {(responseMsg === ResponseMessage.WAITING) ? <div>
+                            The bank has began minting, awaiting tokens now...
+                        </div> : <></>}
 
                         <button style={{ fontSize: '18px', marginTop: '15px' }} onClick={handleExchange}>Exchange</button>
                     </div>
